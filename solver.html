@@ -5,89 +5,446 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>KB Solver</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0; padding: 20px;
-            background: #0a0a0a; color: #fff;
-            font-family: monospace;
+            background: #1a1a2e;
+            color: #fff;
+            font-family: Arial, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
-        h1 { color: #00bcd4; margin-bottom: 16px; font-size: 20px; }
-        .info {
-            background: #1a1a1a;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 10px 0;
+
+        /* ── TOP BAR (mirip kolo) ── */
+        #top-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.8);
+            padding: 8px 14px;
+            font-size: 11px;
+            color: #aaa;
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        #top-bar .site-info { 
+            color: #00bcd4; 
+            font-size: 10px;
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #top-bar .type-badge {
+            background: #ff9800;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* ── MAIN CONTENT ── */
+        #main-content {
+            margin-top: 50px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── STATUS TEXT (mirip "Solving ReCAPTCHA v3, please wait...") ── */
+        #solving-text {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* ── V3 AREA ── */
+        #v3-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
             max-width: 360px;
-            border: 1px solid #2a2a2a;
         }
-        .info div { margin-bottom: 6px; font-size: 13px; }
-        .info span { color: #00bcd4; font-weight: bold; }
-        #tstatus { color: #ffeb3b; }
-        #captcha-area {
-            margin-top: 20px;
+
+        /* Score display */
+        #v3-score-wrap {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 24px 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        #v3-score-label-top {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        #v3-score-num {
+            font-size: 72px;
+            font-weight: bold;
+            color: #4caf50;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(76,175,80,0.5);
+            transition: all 0.5s ease;
+        }
+        #v3-score-num.low  { color: #f44336; text-shadow: 0 0 30px rgba(244,67,54,0.5); }
+        #v3-score-num.mid  { color: #ff9800; text-shadow: 0 0 30px rgba(255,152,0,0.5); }
+        #v3-score-num.high { color: #4caf50; text-shadow: 0 0 30px rgba(76,175,80,0.5); }
+
+        #v3-action-info {
+            font-size: 11px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        /* Progress steps */
+        #v3-steps {
+            width: 100%;
+            font-size: 12px;
+        }
+        .step {
             display: flex;
-            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: all 0.3s;
         }
-        /* Loading spinner */
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #333;
+        .step.pending  { color: #444; background: transparent; }
+        .step.active   { color: #ffeb3b; background: rgba(255,235,59,0.05); }
+        .step.done     { color: #4caf50; background: rgba(76,175,80,0.05); }
+        .step.error    { color: #f44336; background: rgba(244,67,54,0.05); }
+        .step-icon     { width: 20px; text-align: center; font-size: 14px; }
+        .step-text     { flex: 1; }
+
+        /* ── V2 AREA ── */
+        #v2-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #v2-instruction {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* Container widget V2 - background putih seperti aslinya */
+        #v2-widget-wrap {
+            background: #fff;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        /* ── SUCCESS ── */
+        #success-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        #success-area .check { font-size: 70px; margin-bottom: 12px; }
+        #success-area h2     { color: #4caf50; margin-bottom: 8px; font-size: 20px; }
+        #success-area .token-short {
+            font-size: 9px;
+            color: #333;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            word-break: break-all;
+            max-width: 320px;
+            color: #4caf50;
+        }
+        #cd-wrap { margin-top: 10px; }
+        #countdown {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        #cd-label { font-size: 11px; color: #555; }
+
+        /* ── ERROR ── */
+        #error-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        #error-area .err-icon { font-size: 50px; margin-bottom: 12px; }
+        #error-area h3        { color: #f44336; margin-bottom: 8px; }
+        #error-area p         { color: #666; font-size: 12px; }
+
+        /* ── NO PARAMS ── */
+        #no-params {
+            display: none;
+            text-align: center;
+        }
+        #no-params .icon { font-size: 60px; margin-bottom: 16px; }
+        #no-params h2    { color: #ff9800; margin-bottom: 8px; }
+        #no-params p     { color: #555; font-size: 12px; line-height: 1.8; }
+
+        /* ── reCAPTCHA badge (pojok kanan bawah, mirip kolo) ── */
+        #rc-badge-custom {
+            position: fixed;
+            bottom: 14px;
+            right: 14px;
+            display: none;
+        }
+
+        /* ── Spinner kecil ── */
+        .spin {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid #333;
             border-top-color: #00bcd4;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 20px auto;
+            animation: sp 0.7s linear infinite;
+            vertical-align: middle;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes sp { to { transform: rotate(360deg); } }
+
+        /* ── Bottom bar (mirip kolo) ── */
+        #bottom-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.9);
+            padding: 6px 14px;
+            font-size: 10px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #222;
+        }
     </style>
 </head>
 <body>
-    <h1>🤖 KB Captcha Solver</h1>
 
-    <div class="info">
-        <div>Task ID: <span id="tid">-</span></div>
-        <div>Type: <span id="ttype">-</span></div>
-        <div>Status: <span id="tstatus">⏳ Loading...</span></div>
+<!-- TOP BAR -->
+<div id="top-bar">
+    <span class="site-info" id="top-site">KB Captcha Solver</span>
+    <span class="type-badge" id="top-type">-</span>
+</div>
+
+<!-- MAIN -->
+<div id="main-content">
+
+    <div id="solving-text">Menunggu script...</div>
+
+    <!-- ── V3 ── -->
+    <div id="v3-area">
+        <div id="v3-score-wrap">
+            <div id="v3-score-label-top">reCAPTCHA V3 Score</div>
+            <div id="v3-score-num">—</div>
+            <div id="v3-action-info">action: —</div>
+        </div>
+
+        <div id="v3-steps">
+            <div class="step pending" id="step-load">
+                <span class="step-icon">📥</span>
+                <span class="step-text">Load reCAPTCHA script</span>
+            </div>
+            <div class="step pending" id="step-ready">
+                <span class="step-icon">⚙️</span>
+                <span class="step-text">grecaptcha.ready()</span>
+            </div>
+            <div class="step pending" id="step-exec">
+                <span class="step-icon">⚡</span>
+                <span class="step-text">Execute & get token</span>
+            </div>
+            <div class="step pending" id="step-send">
+                <span class="step-icon">📤</span>
+                <span class="step-text">Kirim ke Firebase</span>
+            </div>
+        </div>
     </div>
 
-    <div class="spinner" id="spinner"></div>
-    <div id="captcha-area"></div>
+    <!-- ── V2 ── -->
+    <div id="v2-area">
+        <div id="v2-instruction">👆 Tap checkbox untuk verifikasi</div>
+        <div id="v2-widget-wrap">
+            <div id="kb-v2-widget"></div>
+        </div>
+    </div>
 
-    <script>
-        // Tampilkan info dari URL parameter
-        (function () {
-            var params = new URLSearchParams(window.location.search);
+    <!-- ── SUCCESS ── -->
+    <div id="success-area">
+        <div class="check">✅</div>
+        <h2>Token Terkirim!</h2>
+        <div class="token-short" id="token-short"></div>
+        <div id="cd-wrap">
+            <div id="countdown">3</div>
+            <div id="cd-label">detik kembali...</div>
+        </div>
+    </div>
 
-            var taskId = params.get('kb_task_id') || '-';
-            var type   = (params.get('kb_type')   || '-').toUpperCase();
+    <!-- ── ERROR ── -->
+    <div id="error-area">
+        <div class="err-icon">❌</div>
+        <h3 id="error-title">Error</h3>
+        <p id="error-msg">Terjadi kesalahan</p>
+    </div>
 
-            document.getElementById('tid').textContent   = taskId;
-            document.getElementById('ttype').textContent = type;
+    <!-- ── NO PARAMS ── -->
+    <div id="no-params">
+        <div class="icon">🤖</div>
+        <h2>KB Captcha Solver</h2>
+        <p>
+            Halaman ini diakses otomatis<br>
+            oleh script Tampermonkey Android.<br><br>
+            <span style="color:#00bcd4">Pastikan Tampermonkey aktif.</span>
+        </p>
+    </div>
 
-            // Cek apakah parameter lengkap
-            if (!params.get('kb_task_id') || !params.get('kb_type') || !params.get('kb_sitekey')) {
-                document.getElementById('tstatus').textContent = '⚠️ Parameter tidak lengkap';
-                document.getElementById('spinner').style.display = 'none';
-            } else {
-                document.getElementById('tstatus').textContent = '🚀 Menunggu Tampermonkey...';
-            }
+</div>
 
-            // Tampilkan info debug
-            if (params.get('kb_sitekey')) {
-                var debugDiv = document.createElement('div');
-                debugDiv.style.cssText = 'margin-top:10px;font-size:10px;color:#555;text-align:center;';
-                debugDiv.textContent   = 'Sitekey: ' + params.get('kb_sitekey').substr(0, 20) + '...';
-                document.querySelector('.info').appendChild(debugDiv);
-            }
-        })();
+<!-- reCAPTCHA badge area -->
+<div id="rc-badge-custom"></div>
 
-        // Script Tampermonkey akan take over dari sini
-        // dan memanggil runSolverPage() secara otomatis
-    </script>
+<!-- BOTTOM BAR -->
+<div id="bottom-bar">
+    <span id="bb-task">Task: -</span>
+    <span id="bb-status">KB Solver v7.2</span>
+</div>
+
+<script>
+(function () {
+    var params       = new URLSearchParams(window.location.search);
+    var taskId       = params.get('kb_task_id')   || '';
+    var type         = (params.get('kb_type')     || '').toLowerCase();
+    var sitekey      = params.get('kb_sitekey')   || '';
+    var action       = params.get('kb_action')    || 'submit';
+    var isEnterprise = params.get('kb_enterprise') === '1';
+    var pageUrl      = params.get('kb_page_url')  || '';
+
+    // Update top bar
+    document.getElementById('top-type').textContent = type.toUpperCase() || '-';
+    document.getElementById('top-site').textContent = pageUrl || 'KB Solver';
+    document.getElementById('bb-task').textContent  = 'Task: ' + (taskId || '-');
+
+    // Tidak ada parameter = diakses manual
+    if (!taskId || !type || !sitekey) {
+        document.getElementById('solving-text').style.display = 'none';
+        document.getElementById('no-params').style.display    = 'flex';
+        document.getElementById('top-type').textContent       = '?';
+        return;
+    }
+
+    // ── Helpers ──
+    function setSolvingText(txt) {
+        document.getElementById('solving-text').textContent = txt;
+    }
+
+    function setStep(id, state) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.className = 'step ' + state;
+        if (state === 'active') {
+            el.querySelector('.step-icon').textContent = '<span class="spin"></span>';
+            el.innerHTML = el.innerHTML; // re-render
+            // Lebih baik set langsung:
+            el.querySelector('.step-icon').innerHTML = '<span class="spin"></span>';
+        } else if (state === 'done') {
+            el.querySelector('.step-icon').textContent = '✅';
+        } else if (state === 'error') {
+            el.querySelector('.step-icon').textContent = '❌';
+        }
+    }
+
+    function showArea(id) {
+        ['v3-area','v2-area','success-area','error-area'].forEach(function(a){
+            document.getElementById(a).style.display = 'none';
+        });
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'flex';
+    }
+
+    function showSuccess(token) {
+        showArea('success-area');
+        document.getElementById('solving-text').textContent = '✅ Selesai!';
+        // Token preview singkat
+        var preview = token.substr(0,25) + '...' + token.substr(-8);
+        document.getElementById('token-short').textContent = preview;
+        document.getElementById('bb-status').textContent = '✅ Token terkirim';
+        // Countdown
+        var n = 3;
+        document.getElementById('countdown').textContent = n;
+        var cd = setInterval(function(){
+            n--;
+            document.getElementById('countdown').textContent = n;
+            if (n <= 0) { clearInterval(cd); window.history.back(); }
+        }, 1000);
+    }
+
+    function showError(title, msg) {
+        showArea('error-area');
+        document.getElementById('error-title').textContent = title || 'Error';
+        document.getElementById('error-msg').textContent   = msg   || '';
+        document.getElementById('bb-status').textContent   = '❌ Error';
+        setTimeout(function(){ window.history.back(); }, 5000);
+    }
+
+    // ── Expose ke Tampermonkey ──
+    window.KB_UI = {
+        // V3 steps
+        onV3Load:    function(){ setStep('step-load','active'); setSolvingText('Solving ReCAPTCHA V3, please wait...'); showArea('v3-area'); document.getElementById('v3-action-info').textContent='action: '+action; },
+        onV3Ready:   function(){ setStep('step-load','done'); setStep('step-ready','active'); },
+        onV3Execute: function(){ setStep('step-ready','done'); setStep('step-exec','active'); },
+        onV3Token:   function(token){
+            setStep('step-exec','done');
+            setStep('step-send','active');
+            // Tampilkan score estimasi dari panjang token
+            var scoreEl = document.getElementById('v3-score-num');
+            // Score akan di-set dari PC setelah token diterima
+            scoreEl.textContent = '✓';
+            scoreEl.className   = 'high';
+            setSolvingText('Token diperoleh, mengirim...');
+        },
+        onV3Sent:    function(token){ setStep('step-send','done'); showSuccess(token); },
+        onV3Error:   function(msg){ setStep('step-exec','error'); showError('V3 Error', msg); },
+
+        // V2
+        onV2Load:    function(){ setSolvingText('Loading reCAPTCHA V2...'); showArea('v2-area'); },
+        onV2Ready:   function(){ setSolvingText('Tap checkbox untuk verifikasi 👆'); document.getElementById('bb-status').textContent='⏳ Menunggu user...'; },
+        onV2Solved:  function(){ setSolvingText('V2 solved! Mengirim...'); document.getElementById('bb-status').textContent='📤 Mengirim...'; },
+        onV2Sent:    function(token){ showSuccess(token); },
+        onV2Error:   function(msg){ showError('V2 Error', msg); },
+
+        // Umum
+        onError:     function(msg){ showError('Error', msg); }
+    };
+
+    // Fallback jika Tampermonkey tidak jalan dalam 10 detik
+    setTimeout(function(){
+        if (document.getElementById('v3-area').style.display === 'none' &&
+            document.getElementById('v2-area').style.display === 'none' &&
+            document.getElementById('success-area').style.display === 'none') {
+            showError('Tampermonkey tidak terdeteksi',
+                'Pastikan extension aktif dan reload halaman');
+        }
+    }, 10000);
+
+})();
+</script>
+
 </body>
 </html>

@@ -3,68 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>KB Solver</title>
+    <title>KB Captcha Solver</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: #1a1a2e;
+            background: #0f1117;
             color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 20px;
         }
 
-        /* ── TOP BAR (mirip kolo) ── */
+        /* ── TOP BAR ── */
         #top-bar {
             position: fixed;
             top: 0; left: 0; right: 0;
-            background: rgba(0,0,0,0.8);
-            padding: 8px 14px;
+            background: rgba(0,0,0,0.85);
+            padding: 10px 14px;
             font-size: 11px;
             color: #aaa;
             z-index: 9999;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #2a2a2a;
         }
-        #top-bar .site-info { 
-            color: #00bcd4; 
+        #top-site {
+            color: #00bcd4;
             font-size: 10px;
-            max-width: 70%;
+            max-width: 65%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        #top-bar .type-badge {
+        #top-type {
             background: #ff9800;
             color: #000;
-            padding: 2px 8px;
+            padding: 3px 10px;
             border-radius: 10px;
             font-size: 10px;
             font-weight: bold;
         }
 
-        /* ── MAIN CONTENT ── */
+        /* ── MAIN ── */
         #main-content {
-            margin-top: 50px;
+            margin-top: 55px;
             width: 100%;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* ── STATUS TEXT (mirip "Solving ReCAPTCHA v3, please wait...") ── */
         #solving-text {
-            font-size: 14px;
+            font-size: 13px;
             color: #ccc;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
+            min-height: 18px;
         }
 
         /* ── V3 AREA ── */
@@ -73,45 +74,38 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 360px;
         }
 
-        /* Score display */
         #v3-score-wrap {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 24px 40px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid #2a2a3a;
+            border-radius: 14px;
+            padding: 26px 30px;
             text-align: center;
             margin-bottom: 20px;
             width: 100%;
         }
         #v3-score-label-top {
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
         #v3-score-num {
-            font-size: 72px;
+            font-size: 60px;
             font-weight: bold;
             color: #4caf50;
             line-height: 1;
-            text-shadow: 0 0 30px rgba(76,175,80,0.5);
-            transition: all 0.5s ease;
+            text-shadow: 0 0 25px rgba(76,175,80,0.5);
+            transition: all 0.4s ease;
         }
-        #v3-score-num.low  { color: #f44336; text-shadow: 0 0 30px rgba(244,67,54,0.5); }
-        #v3-score-num.mid  { color: #ff9800; text-shadow: 0 0 30px rgba(255,152,0,0.5); }
-        #v3-score-num.high { color: #4caf50; text-shadow: 0 0 30px rgba(76,175,80,0.5); }
-
         #v3-action-info {
             font-size: 11px;
             color: #555;
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
-        /* Progress steps */
         #v3-steps {
             width: 100%;
             font-size: 12px;
@@ -120,38 +114,42 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-bottom: 4px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
             transition: all 0.3s;
+            background: rgba(255,255,255,0.02);
         }
-        .step.pending  { color: #444; background: transparent; }
-        .step.active   { color: #ffeb3b; background: rgba(255,235,59,0.05); }
-        .step.done     { color: #4caf50; background: rgba(76,175,80,0.05); }
-        .step.error    { color: #f44336; background: rgba(244,67,54,0.05); }
-        .step-icon     { width: 20px; text-align: center; font-size: 14px; }
-        .step-text     { flex: 1; }
+        .step.pending { color: #444; }
+        .step.active  { color: #ffeb3b; background: rgba(255,235,59,0.06); }
+        .step.done    { color: #4caf50; background: rgba(76,175,80,0.06); }
+        .step.error   { color: #f44336; background: rgba(244,67,54,0.06); }
+        .step-icon { width: 20px; text-align: center; font-size: 14px; }
+        .step-text { flex: 1; }
 
         /* ── V2 AREA ── */
         #v2-area {
             display: none;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
-
         #v2-instruction {
             font-size: 13px;
             color: #aaa;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             text-align: center;
         }
-
-        /* Container widget V2 - background putih seperti aslinya */
         #v2-widget-wrap {
             background: #fff;
-            border-radius: 4px;
+            border-radius: 6px;
             padding: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.6);
+            min-height: 78px;
+            min-width: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* ── SUCCESS ── */
@@ -160,24 +158,33 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            width: 100%;
         }
-        #success-area .check { font-size: 70px; margin-bottom: 12px; }
-        #success-area h2     { color: #4caf50; margin-bottom: 8px; font-size: 20px; }
-        #success-area .token-short {
+        #success-area .check {
+            font-size: 64px;
+            margin-bottom: 14px;
+            animation: pop 0.4s ease;
+        }
+        @keyframes pop {
+            0%   { transform: scale(0); }
+            60%  { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        #success-area h2 { color: #4caf50; margin-bottom: 10px; font-size: 20px; }
+        #token-short {
             font-size: 9px;
-            color: #333;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            padding: 6px 10px;
-            border-radius: 4px;
-            margin: 10px 0;
+            color: #4caf50;
+            background: #0d1a0d;
+            border: 1px solid #1b5e20;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 12px 0;
             word-break: break-all;
             max-width: 320px;
-            color: #4caf50;
         }
-        #cd-wrap { margin-top: 10px; }
+        #cd-wrap { margin-top: 8px; }
         #countdown {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: bold;
             color: #4caf50;
         }
@@ -189,60 +196,52 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            width: 100%;
         }
-        #error-area .err-icon { font-size: 50px; margin-bottom: 12px; }
-        #error-area h3        { color: #f44336; margin-bottom: 8px; }
-        #error-area p         { color: #666; font-size: 12px; }
+        #error-area .err-icon { font-size: 48px; margin-bottom: 12px; }
+        #error-area h3 { color: #f44336; margin-bottom: 8px; }
+        #error-msg { color: #888; font-size: 12px; max-width: 300px; }
 
         /* ── NO PARAMS ── */
         #no-params {
             display: none;
             text-align: center;
+            padding: 30px 20px;
         }
-        #no-params .icon { font-size: 60px; margin-bottom: 16px; }
-        #no-params h2    { color: #ff9800; margin-bottom: 8px; }
-        #no-params p     { color: #555; font-size: 12px; line-height: 1.8; }
+        #no-params .icon { font-size: 56px; margin-bottom: 16px; }
+        #no-params h2 { color: #ff9800; margin-bottom: 10px; font-size: 18px; }
+        #no-params p { color: #666; font-size: 12px; line-height: 1.8; }
 
-        /* ── reCAPTCHA badge (pojok kanan bawah, mirip kolo) ── */
-        #rc-badge-custom {
-            position: fixed;
-            bottom: 14px;
-            right: 14px;
-            display: none;
-        }
-
-        /* ── Spinner kecil ── */
-        .spin {
-            display: inline-block;
-            width: 14px; height: 14px;
-            border: 2px solid #333;
-            border-top-color: #00bcd4;
-            border-radius: 50%;
-            animation: sp 0.7s linear infinite;
-            vertical-align: middle;
-        }
-        @keyframes sp { to { transform: rotate(360deg); } }
-
-        /* ── Bottom bar (mirip kolo) ── */
+        /* ── BOTTOM BAR ── */
         #bottom-bar {
             position: fixed;
             bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.9);
-            padding: 6px 14px;
+            padding: 8px 14px;
             font-size: 10px;
-            color: #444;
+            color: #555;
             display: flex;
             justify-content: space-between;
             border-top: 1px solid #222;
         }
+
+        .spin-icon {
+            display: inline-block;
+            width: 13px; height: 13px;
+            border: 2px solid #333;
+            border-top-color: #ffeb3b;
+            border-radius: 50%;
+            animation: sp 0.7s linear infinite;
+        }
+        @keyframes sp { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <!-- TOP BAR -->
 <div id="top-bar">
-    <span class="site-info" id="top-site">KB Captcha Solver</span>
-    <span class="type-badge" id="top-type">-</span>
+    <span id="top-site">KB Captcha Solver</span>
+    <span id="top-type">-</span>
 </div>
 
 <!-- MAIN -->
@@ -250,7 +249,7 @@
 
     <div id="solving-text">Menunggu script...</div>
 
-    <!-- ── V3 ── -->
+    <!-- V3 -->
     <div id="v3-area">
         <div id="v3-score-wrap">
             <div id="v3-score-label-top">reCAPTCHA V3 Score</div>
@@ -278,56 +277,55 @@
         </div>
     </div>
 
-    <!-- ── V2 ── -->
+    <!-- V2 -->
     <div id="v2-area">
-        <div id="v2-instruction">👆 Tap checkbox untuk verifikasi</div>
+        <div id="v2-instruction">Loading reCAPTCHA V2...</div>
         <div id="v2-widget-wrap">
             <div id="kb-v2-widget"></div>
         </div>
     </div>
 
-    <!-- ── SUCCESS ── -->
+    <!-- SUCCESS -->
     <div id="success-area">
         <div class="check">✅</div>
         <h2>Token Terkirim!</h2>
         <div class="token-short" id="token-short"></div>
         <div id="cd-wrap">
             <div id="countdown">3</div>
-            <div id="cd-label">detik kembali...</div>
+            <div id="cd-label">detik, kembali otomatis...</div>
         </div>
     </div>
 
-    <!-- ── ERROR ── -->
+    <!-- ERROR -->
     <div id="error-area">
         <div class="err-icon">❌</div>
         <h3 id="error-title">Error</h3>
         <p id="error-msg">Terjadi kesalahan</p>
     </div>
 
-    <!-- ── NO PARAMS ── -->
+    <!-- NO PARAMS -->
     <div id="no-params">
         <div class="icon">🤖</div>
         <h2>KB Captcha Solver</h2>
         <p>
             Halaman ini diakses otomatis<br>
             oleh script Tampermonkey Android.<br><br>
-            <span style="color:#00bcd4">Pastikan Tampermonkey aktif.</span>
+            <span style="color:#00bcd4">Pastikan Tampermonkey aktif</span><br>
+            dan sedang standby di halaman ini.
         </p>
     </div>
 
 </div>
 
-<!-- reCAPTCHA badge area -->
-<div id="rc-badge-custom"></div>
-
 <!-- BOTTOM BAR -->
 <div id="bottom-bar">
     <span id="bb-task">Task: -</span>
-    <span id="bb-status">KB Solver v7.2</span>
+    <span id="bb-status">KB Solver v7.4</span>
 </div>
 
 <script>
 (function () {
+    // ── Ambil parameter URL ──
     var params       = new URLSearchParams(window.location.search);
     var taskId       = params.get('kb_task_id')   || '';
     var type         = (params.get('kb_type')     || '').toLowerCase();
@@ -336,20 +334,25 @@
     var isEnterprise = params.get('kb_enterprise') === '1';
     var pageUrl      = params.get('kb_page_url')  || '';
 
-    // Update top bar
-    document.getElementById('top-type').textContent = type.toUpperCase() || '-';
+    // ── Update top bar & bottom bar ──
+    document.getElementById('top-type').textContent = type ? type.toUpperCase() : '-';
     document.getElementById('top-site').textContent = pageUrl || 'KB Solver';
     document.getElementById('bb-task').textContent  = 'Task: ' + (taskId || '-');
 
-    // Tidak ada parameter = diakses manual
+    // ── Jika tidak ada parameter lengkap = halaman standby (diakses manual/kosong) ──
     if (!taskId || !type || !sitekey) {
         document.getElementById('solving-text').style.display = 'none';
-        document.getElementById('no-params').style.display    = 'flex';
-        document.getElementById('top-type').textContent       = '?';
+        document.getElementById('no-params').style.display    = 'block';
+        document.getElementById('top-type').textContent       = '-';
+        // Tidak return total, biarkan script Tampermonkey (mode standby)
+        // tetap bisa jalan di background halaman ini
+        window.KB_SOLVER_NO_PARAMS = true;
         return;
     }
 
-    // ── Helpers ──
+    // =========================================================
+    // HELPER FUNCTIONS
+    // =========================================================
     function setSolvingText(txt) {
         document.getElementById('solving-text').textContent = txt;
     }
@@ -358,40 +361,45 @@
         var el = document.getElementById(id);
         if (!el) return;
         el.className = 'step ' + state;
+        var icon = el.querySelector('.step-icon');
+        if (!icon) return;
         if (state === 'active') {
-            el.querySelector('.step-icon').textContent = '<span class="spin"></span>';
-            el.innerHTML = el.innerHTML; // re-render
-            // Lebih baik set langsung:
-            el.querySelector('.step-icon').innerHTML = '<span class="spin"></span>';
+            icon.innerHTML = '<span class="spin-icon"></span>';
         } else if (state === 'done') {
-            el.querySelector('.step-icon').textContent = '✅';
+            icon.textContent = '✅';
         } else if (state === 'error') {
-            el.querySelector('.step-icon').textContent = '❌';
+            icon.textContent = '❌';
         }
     }
 
     function showArea(id) {
-        ['v3-area','v2-area','success-area','error-area'].forEach(function(a){
-            document.getElementById(a).style.display = 'none';
+        ['v3-area', 'v2-area', 'success-area', 'error-area'].forEach(function (a) {
+            var el = document.getElementById(a);
+            if (el) el.style.display = 'none';
         });
-        var el = document.getElementById(id);
-        if (el) el.style.display = 'flex';
+        var target = document.getElementById(id);
+        if (target) target.style.display = 'flex';
     }
 
     function showSuccess(token) {
         showArea('success-area');
-        document.getElementById('solving-text').textContent = '✅ Selesai!';
-        // Token preview singkat
-        var preview = token.substr(0,25) + '...' + token.substr(-8);
-        document.getElementById('token-short').textContent = preview;
-        document.getElementById('bb-status').textContent = '✅ Token terkirim';
-        // Countdown
+        setSolvingText('✅ Selesai!');
+
+        var preview = token.length > 40
+            ? token.substr(0, 28) + '...' + token.substr(-10)
+            : token;
+        document.getElementById('token-short').textContent = '🔑 ' + preview;
+        document.getElementById('bb-status').textContent   = '✅ Token terkirim';
+
         var n = 3;
         document.getElementById('countdown').textContent = n;
-        var cd = setInterval(function(){
+        var cd = setInterval(function () {
             n--;
             document.getElementById('countdown').textContent = n;
-            if (n <= 0) { clearInterval(cd); window.history.back(); }
+            if (n <= 0) {
+                clearInterval(cd);
+                try { window.history.back(); } catch (e) {}
+            }
         }, 1000);
     }
 
@@ -400,48 +408,104 @@
         document.getElementById('error-title').textContent = title || 'Error';
         document.getElementById('error-msg').textContent   = msg   || '';
         document.getElementById('bb-status').textContent   = '❌ Error';
-        setTimeout(function(){ window.history.back(); }, 5000);
+        setTimeout(function () {
+            try { window.history.back(); } catch (e) {}
+        }, 5000);
     }
 
-    // ── Expose ke Tampermonkey ──
+    // =========================================================
+    // EXPOSE KE TAMPERMONKEY - window.KB_UI
+    // =========================================================
     window.KB_UI = {
-        // V3 steps
-        onV3Load:    function(){ setStep('step-load','active'); setSolvingText('Solving ReCAPTCHA V3, please wait...'); showArea('v3-area'); document.getElementById('v3-action-info').textContent='action: '+action; },
-        onV3Ready:   function(){ setStep('step-load','done'); setStep('step-ready','active'); },
-        onV3Execute: function(){ setStep('step-ready','done'); setStep('step-exec','active'); },
-        onV3Token:   function(token){
-            setStep('step-exec','done');
-            setStep('step-send','active');
-            // Tampilkan score estimasi dari panjang token
-            var scoreEl = document.getElementById('v3-score-num');
-            // Score akan di-set dari PC setelah token diterima
-            scoreEl.textContent = '✓';
-            scoreEl.className   = 'high';
-            setSolvingText('Token diperoleh, mengirim...');
+
+        // ── V3 CALLBACKS ──
+        onV3Load: function () {
+            setSolvingText('Solving ReCAPTCHA V3, please wait...');
+            showArea('v3-area');
+            document.getElementById('v3-action-info').textContent = 'action: ' + action;
+            setStep('step-load', 'active');
         },
-        onV3Sent:    function(token){ setStep('step-send','done'); showSuccess(token); },
-        onV3Error:   function(msg){ setStep('step-exec','error'); showError('V3 Error', msg); },
 
-        // V2
-        onV2Load:    function(){ setSolvingText('Loading reCAPTCHA V2...'); showArea('v2-area'); },
-        onV2Ready:   function(){ setSolvingText('Tap checkbox untuk verifikasi 👆'); document.getElementById('bb-status').textContent='⏳ Menunggu user...'; },
-        onV2Solved:  function(){ setSolvingText('V2 solved! Mengirim...'); document.getElementById('bb-status').textContent='📤 Mengirim...'; },
-        onV2Sent:    function(token){ showSuccess(token); },
-        onV2Error:   function(msg){ showError('V2 Error', msg); },
+        onV3Ready: function () {
+            setStep('step-load', 'done');
+            setStep('step-ready', 'active');
+        },
 
-        // Umum
-        onError:     function(msg){ showError('Error', msg); }
+        onV3Execute: function () {
+            setStep('step-ready', 'done');
+            setStep('step-exec', 'active');
+            document.getElementById('v3-score-num').textContent = '...';
+        },
+
+        onV3Token: function (token) {
+            setStep('step-exec', 'done');
+            setStep('step-send', 'active');
+            document.getElementById('v3-score-num').textContent = '✓';
+            document.getElementById('v3-score-num').style.color = '#4caf50';
+            setSolvingText('Token diperoleh, mengirim...');
+            document.getElementById('bb-status').textContent = '📤 Mengirim token...';
+        },
+
+        onV3Sent: function (token) {
+            setStep('step-send', 'done');
+            showSuccess(token);
+        },
+
+        onV3Error: function (msg) {
+            setStep('step-exec', 'error');
+            showError('V3 Error', msg);
+        },
+
+        // ── V2 CALLBACKS ──
+        onV2Load: function () {
+            setSolvingText('Loading reCAPTCHA V2...');
+            showArea('v2-area');
+            document.getElementById('v2-instruction').textContent = 'Loading...';
+        },
+
+        onV2Ready: function () {
+            setSolvingText('👆 Tap checkbox untuk verifikasi');
+            document.getElementById('v2-instruction').textContent = '👆 Tap checkbox di bawah';
+            document.getElementById('bb-status').textContent = '⏳ Menunggu user...';
+        },
+
+        onV2Solved: function () {
+            setSolvingText('V2 solved! Mengirim...');
+            document.getElementById('v2-instruction').textContent = '✅ Terverifikasi, mengirim...';
+            document.getElementById('bb-status').textContent = '📤 Mengirim...';
+        },
+
+        onV2Sent: function (token) {
+            showSuccess(token);
+        },
+
+        onV2Error: function (msg) {
+            showError('V2 Error', msg);
+        },
+
+        // ── UMUM ──
+        onError: function (msg) {
+            showError('Error', msg);
+        }
     };
 
-    // Fallback jika Tampermonkey tidak jalan dalam 10 detik
-    setTimeout(function(){
-        if (document.getElementById('v3-area').style.display === 'none' &&
-            document.getElementById('v2-area').style.display === 'none' &&
-            document.getElementById('success-area').style.display === 'none') {
-            showError('Tampermonkey tidak terdeteksi',
-                'Pastikan extension aktif dan reload halaman');
+    // =========================================================
+    // FALLBACK: Jika Tampermonkey tidak aktif dalam 12 detik
+    // =========================================================
+    setTimeout(function () {
+        var v3Display = document.getElementById('v3-area').style.display;
+        var v2Display = document.getElementById('v2-area').style.display;
+        var okDisplay  = document.getElementById('success-area').style.display;
+        var errDisplay = document.getElementById('error-area').style.display;
+
+        if (v3Display !== 'flex' && v2Display !== 'flex' &&
+            okDisplay !== 'flex' && errDisplay !== 'flex') {
+            showError(
+                'Tampermonkey tidak terdeteksi',
+                'Pastikan extension Tampermonkey aktif, lalu reload halaman ini'
+            );
         }
-    }, 10000);
+    }, 12000);
 
 })();
 </script>

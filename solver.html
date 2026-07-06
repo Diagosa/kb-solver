@@ -5,36 +5,89 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>KB Solver</title>
     <style>
-        body { 
-            margin: 0; padding: 20px; 
-            background: #0a0a0a; color: #fff; 
-            font-family: monospace; 
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 20px;
+            background: #0a0a0a; color: #fff;
+            font-family: monospace;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        h1 { color: #00bcd4; }
-        .info { background: #1a1a1a; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        h1 { color: #00bcd4; margin-bottom: 16px; font-size: 20px; }
+        .info {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 360px;
+            border: 1px solid #2a2a2a;
+        }
+        .info div { margin-bottom: 6px; font-size: 13px; }
+        .info span { color: #00bcd4; font-weight: bold; }
+        #tstatus { color: #ffeb3b; }
+        #captcha-area {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        /* Loading spinner */
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #333;
+            border-top-color: #00bcd4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <h1>🤖 KB Captcha Solver</h1>
+
     <div class="info">
         <div>Task ID: <span id="tid">-</span></div>
         <div>Type: <span id="ttype">-</span></div>
         <div>Status: <span id="tstatus">⏳ Loading...</span></div>
     </div>
+
+    <div class="spinner" id="spinner"></div>
     <div id="captcha-area"></div>
-    
+
     <script>
-        // Tampilkan info dari URL
-        var params = new URLSearchParams(window.location.search);
-        document.getElementById('tid').textContent = params.get('kb_task_id') || '-';
-        document.getElementById('ttype').textContent = (params.get('kb_type') || '-').toUpperCase();
-        document.getElementById('tstatus').textContent = '🚀 Menunggu Tampermonkey...';
+        // Tampilkan info dari URL parameter
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+
+            var taskId = params.get('kb_task_id') || '-';
+            var type   = (params.get('kb_type')   || '-').toUpperCase();
+
+            document.getElementById('tid').textContent   = taskId;
+            document.getElementById('ttype').textContent = type;
+
+            // Cek apakah parameter lengkap
+            if (!params.get('kb_task_id') || !params.get('kb_type') || !params.get('kb_sitekey')) {
+                document.getElementById('tstatus').textContent = '⚠️ Parameter tidak lengkap';
+                document.getElementById('spinner').style.display = 'none';
+            } else {
+                document.getElementById('tstatus').textContent = '🚀 Menunggu Tampermonkey...';
+            }
+
+            // Tampilkan info debug
+            if (params.get('kb_sitekey')) {
+                var debugDiv = document.createElement('div');
+                debugDiv.style.cssText = 'margin-top:10px;font-size:10px;color:#555;text-align:center;';
+                debugDiv.textContent   = 'Sitekey: ' + params.get('kb_sitekey').substr(0, 20) + '...';
+                document.querySelector('.info').appendChild(debugDiv);
+            }
+        })();
+
         // Script Tampermonkey akan take over dari sini
+        // dan memanggil runSolverPage() secara otomatis
     </script>
 </body>
 </html>

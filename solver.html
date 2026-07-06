@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>KB Solver</title>
+    <style>
+        body { 
+            margin: 0; padding: 20px; 
+            background: #0a0a0a; color: #fff; 
+            font-family: monospace; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 { color: #00bcd4; }
+        .info { background: #1a1a1a; padding: 15px; border-radius: 8px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🤖 KB Captcha Solver</h1>
+    <div class="info">
+        <div>Task ID: <span id="tid">-</span></div>
+        <div>Type: <span id="ttype">-</span></div>
+        <div>Status: <span id="tstatus">⏳ Loading...</span></div>
+    </div>
+    <div id="captcha-area"></div>
+    
+    <script>
+        // Tampilkan info dari URL
+        var params = new URLSearchParams(window.location.search);
+        document.getElementById('tid').textContent = params.get('kb_task_id') || '-';
+        document.getElementById('ttype').textContent = (params.get('kb_type') || '-').toUpperCase();
+        document.getElementById('tstatus').textContent = '🚀 Menunggu Tampermonkey...';
+        // Script Tampermonkey akan take over dari sini
+    </script>
+</body>
+</html>

@@ -17,7 +17,6 @@
             padding-top: 50px;
             padding-bottom: 60px;
         }
-        /* TOP BAR */
         #top-bar {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -47,7 +46,6 @@
             border-radius: 12px;
             font-family: monospace;
         }
-        /* SOLVING TEXT */
         #solving-text {
             font-size: 14px;
             color: #ccc;
@@ -56,7 +54,8 @@
             padding: 0 20px;
             font-family: monospace;
         }
-        /* V3 AREA */
+
+        /* V3 */
         #v3-area {
             display: none;
             flex-direction: column;
@@ -74,38 +73,19 @@
             width: 100%;
             margin-bottom: 16px;
         }
-        #v3-score-top {
-            font-size: 10px;
-            color: #555;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-        #v3-score-num {
-            font-size: 64px;
-            font-weight: bold;
-            color: #4caf50;
-            line-height: 1;
-            transition: color 0.4s;
-        }
-        #v3-score-sub { font-size: 11px; color: #555; margin-top: 6px; }
-        #v3-action-info { font-size: 11px; color: #444; margin-top: 4px; }
-        #v3-steps { width: 100%; font-size: 12px; font-family: monospace; }
-        .step {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 10px;
-            border-radius: 6px;
-            margin-bottom: 3px;
-            transition: all 0.3s;
-        }
-        .step.pending { color: #333; }
-        .step.active { color: #ffeb3b; background: rgba(255,235,59,0.05); }
-        .step.done { color: #4caf50; background: rgba(76,175,80,0.05); }
-        .step.error { color: #f44336; background: rgba(244,67,54,0.05); }
-        .step-ico { width: 18px; text-align: center; }
-        /* V2 AREA */
+        #v3-score-top { font-size:10px; color:#555; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+        #v3-score-num { font-size:64px; font-weight:bold; color:#4caf50; line-height:1; transition:color 0.4s; }
+        #v3-score-sub { font-size:11px; color:#555; margin-top:6px; }
+        #v3-action-info { font-size:11px; color:#444; margin-top:4px; }
+        #v3-steps { width:100%; font-size:12px; font-family:monospace; }
+        .step { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:6px; margin-bottom:3px; transition:all 0.3s; }
+        .step.pending { color:#333; }
+        .step.active  { color:#ffeb3b; background:rgba(255,235,59,0.05); }
+        .step.done    { color:#4caf50; background:rgba(76,175,80,0.05); }
+        .step.error   { color:#f44336; background:rgba(244,67,54,0.05); }
+        .step-ico { width:18px; text-align:center; }
+
+        /* V2 */
         #v2-area {
             display: none;
             flex-direction: column;
@@ -120,13 +100,16 @@
             text-align: center;
             font-family: monospace;
         }
-        #v2-widget-wrap {
-            background: #fff;
+        /* iframe yang menampung widget V2 */
+        #v2-iframe {
+            border: none;
             border-radius: 6px;
-            padding: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            display: inline-block;
+            background: transparent;
+            width: 320px;
+            height: 500px;
+            display: block;
         }
+
         /* SUCCESS */
         #success-area {
             display: none;
@@ -137,9 +120,9 @@
             width: 100%;
             max-width: 340px;
         }
-        .big-icon { font-size: 64px; margin-bottom: 12px; }
-        #success-area h2 { color: #4caf50; margin-bottom: 8px; font-size: 20px; }
-        #success-area p { color: #555; font-size: 12px; }
+        .big-icon { font-size:64px; margin-bottom:12px; }
+        #success-area h2 { color:#4caf50; margin-bottom:8px; font-size:20px; }
+        #success-area p  { color:#555; font-size:12px; }
         #token-preview {
             margin: 12px 0;
             background: #0d1a0d;
@@ -152,7 +135,8 @@
             font-family: monospace;
             width: 100%;
         }
-        #countdown { font-size: 40px; font-weight: bold; color: #4caf50; margin: 8px 0; }
+        #countdown { font-size:40px; font-weight:bold; color:#4caf50; margin:8px 0; }
+
         /* ERROR */
         #error-area {
             display: none;
@@ -161,8 +145,9 @@
             text-align: center;
             padding: 0 20px;
         }
-        #error-area h3 { color: #f44336; margin-bottom: 8px; font-size: 18px; }
-        #error-area p { color: #666; font-size: 12px; }
+        #error-area h3 { color:#f44336; margin-bottom:8px; font-size:18px; }
+        #error-area p  { color:#666; font-size:12px; }
+
         /* NO PARAMS */
         #no-params {
             display: none;
@@ -171,9 +156,9 @@
             text-align: center;
             padding: 20px;
         }
-        #no-params .big-icon { font-size: 70px; }
-        #no-params h2 { color: #ff9800; margin-bottom: 10px; }
-        #no-params p { color: #555; font-size: 12px; line-height: 1.8; }
+        #no-params h2 { color:#ff9800; margin-bottom:10px; }
+        #no-params p  { color:#555; font-size:12px; line-height:1.8; }
+
         /* BOTTOM BAR */
         #bottom-bar {
             position: fixed;
@@ -188,45 +173,25 @@
             font-size: 10px;
             color: #444;
         }
-        /* SPINNER */
         .spin {
-            display: inline-block;
-            width: 12px; height: 12px;
-            border: 2px solid #333;
-            border-top-color: #ffeb3b;
-            border-radius: 50%;
-            animation: sp 0.7s linear infinite;
-            vertical-align: middle;
+            display:inline-block; width:12px; height:12px;
+            border:2px solid #333; border-top-color:#ffeb3b;
+            border-radius:50%; animation:sp 0.7s linear infinite;
+            vertical-align:middle;
         }
-        @keyframes sp { to { transform: rotate(360deg); } }
-        /* DOT PULSE */
-        .dot-pulse {
-            display: inline-block;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #4caf50;
-            animation: pulse 1.5s infinite;
-            vertical-align: middle;
-            margin-right: 4px;
-        }
-        @keyframes pulse {
-            0%,100% { opacity:1; transform:scale(1); }
-            50% { opacity:0.4; transform:scale(0.7); }
-        }
+        @keyframes sp { to { transform:rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div id="top-bar">
     <span id="top-site">KB Captcha Solver</span>
     <span id="top-type">-</span>
 </div>
 
-<!-- SOLVING TEXT -->
 <div id="solving-text">Memuat...</div>
 
-<!-- V3 AREA -->
+<!-- V3 -->
 <div id="v3-area">
     <div id="v3-score-wrap">
         <div id="v3-score-top">reCAPTCHA V3 Score</div>
@@ -242,7 +207,7 @@
             <span class="step-ico">⚙️</span><span>grecaptcha.ready()</span>
         </div>
         <div class="step pending" id="step-exec">
-            <span class="step-ico">⚡</span><span>Execute & get token</span>
+            <span class="step-ico">⚡</span><span>Execute &amp; get token</span>
         </div>
         <div class="step pending" id="step-send">
             <span class="step-ico">📤</span><span>Kirim ke Firebase</span>
@@ -250,12 +215,10 @@
     </div>
 </div>
 
-<!-- V2 AREA -->
+<!-- V2 - pakai iframe agar domain match -->
 <div id="v2-area">
-    <div id="v2-label">👆 Tap checkbox untuk verifikasi</div>
-    <div id="v2-widget-wrap">
-        <div id="kb-v2-widget"></div>
-    </div>
+    <div id="v2-label">🔄 Memuat widget V2...</div>
+    <iframe id="v2-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
 </div>
 
 <!-- SUCCESS -->
@@ -276,101 +239,84 @@
 
 <!-- NO PARAMS -->
 <div id="no-params">
-    <div class="big-icon">🤖</div>
+    <div class="big-icon" style="font-size:70px;">🤖</div>
     <h2>KB Captcha Solver</h2>
-    <p>Halaman ini diakses otomatis<br>oleh script Tampermonkey Android.<br><br><span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span><br>Buka halaman ini di Kiwi Browser<br>dan biarkan terbuka sebagai standby.</p>
+    <p>
+        Halaman ini diakses otomatis<br>
+        oleh script Tampermonkey Android.<br><br>
+        <span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span>
+    </p>
 </div>
 
-<!-- BOTTOM BAR -->
 <div id="bottom-bar">
     <span id="bb-task">Task: -</span>
-    <span id="bb-ver">KB Solver UI v7.5</span>
+    <span id="bb-ver">KB Solver v7.4</span>
 </div>
 
 <script>
 (function() {
-    // ── Ambil parameter URL ──
-    var params = new URLSearchParams(window.location.search);
-    var taskId = params.get('kb_task_id') || '';
-    var type = (params.get('kb_type') || '').toLowerCase();
-    var sitekey = params.get('kb_sitekey') || '';
-    var action = params.get('kb_action') || 'submit';
+    var params       = new URLSearchParams(window.location.search);
+    var taskId       = params.get('kb_task_id')   || '';
+    var type         = (params.get('kb_type')     || '').toLowerCase();
+    var sitekey      = params.get('kb_sitekey')   || '';
+    var action       = params.get('kb_action')    || 'submit';
     var isEnterprise = params.get('kb_enterprise') === '1';
-    var pageUrl = params.get('kb_page_url') || '';
+    var pageUrl      = params.get('kb_page_url')  || '';
+    var fbUrl        = params.get('kb_fb')        || '';
 
-    // ── Update top bar & bottom bar ──
     document.getElementById('top-type').textContent = type ? type.toUpperCase() : '?';
     document.getElementById('top-site').textContent = pageUrl || 'KB Captcha Solver';
-    document.getElementById('bb-task').textContent = taskId ? ('Task: ' + taskId) : 'Standby';
+    document.getElementById('bb-task').textContent  = taskId ? ('Task: ' + taskId) : 'Standby';
 
-    // ── Helper: tampilkan area ──
     var areas = ['v3-area','v2-area','success-area','error-area','no-params'];
     function showArea(id) {
         areas.forEach(function(a) {
             var el = document.getElementById(a);
             if (el) el.style.display = 'none';
         });
-        var target = document.getElementById(id);
-        if (target) target.style.display = 'flex';
+        var t = document.getElementById(id);
+        if (t) t.style.display = 'flex';
     }
 
-    // ── Helper: update step ──
     function setStep(id, state) {
         var el = document.getElementById(id);
         if (!el) return;
         el.className = 'step ' + state;
         var ico = el.querySelector('.step-ico');
         if (!ico) return;
-        
-        if (state === 'active') {
-            ico.innerHTML = '<span class="spin"></span>';
-        } else if (state === 'done') {
-            ico.textContent = '✅';
-        } else if (state === 'error') {
-            ico.textContent = '❌';
-        } else {
-            var origMap = { 'step-load': '📥', 'step-ready': '⚙️', 'step-exec': '⚡', 'step-send': '📤' };
-            ico.textContent = origMap[id] || '•';
-        }
+        var origMap = { 'step-load':'📥','step-ready':'⚙️','step-exec':'⚡','step-send':'📤' };
+        if (state === 'active')  ico.innerHTML = '<span class="spin"></span>';
+        else if (state === 'done')  ico.textContent = '✅';
+        else if (state === 'error') ico.textContent = '❌';
+        else ico.textContent = origMap[id] || '•';
     }
 
-    // Fungsi reset halaman (Anti-Nyangkut)
-    function backToStandby() {
-        window.location.replace(window.location.pathname);
-    }
-
-    // ── Helper: success ──
     function showSuccess(token) {
         showArea('success-area');
         document.getElementById('solving-text').textContent = '✅ Selesai!';
         document.getElementById('bb-task').textContent = '✅ Token terkirim!';
-        var preview = token.length > 40 ? token.substr(0, 28) + '...' + token.substr(-10) : token;
+        var preview = token.length > 40
+            ? token.substr(0,28) + '...' + token.substr(-10)
+            : token;
         document.getElementById('token-preview').textContent = '🔑 ' + preview;
-        
         var n = 3;
         document.getElementById('countdown').textContent = n;
         var cd = setInterval(function() {
             n--;
             document.getElementById('countdown').textContent = n;
-            if (n <= 0) {
-                clearInterval(cd);
-                backToStandby();
-            }
+            if (n <= 0) { clearInterval(cd); window.history.back(); }
         }, 1000);
     }
 
-    // ── Helper: error ──
     function showError(title, msg) {
         showArea('error-area');
         document.getElementById('error-title').textContent = title || 'Error';
-        document.getElementById('error-msg').textContent = msg || '';
-        document.getElementById('solving-text').textContent = '❌ ' + (title || 'Error');
+        document.getElementById('error-msg').textContent   = msg   || '';
+        document.getElementById('solving-text').textContent = '❌ ' + (title||'Error');
         document.getElementById('bb-task').textContent = '❌ Error';
-        
-        setTimeout(function() { backToStandby(); }, 5000);
+        setTimeout(function() { window.history.back(); }, 5000);
     }
 
-    // ── Tidak ada parameter = standby / akses manual ──
     if (!taskId || !type || !sitekey) {
         document.getElementById('solving-text').textContent = 'Standby...';
         document.getElementById('top-type').textContent = '?';
@@ -378,82 +324,149 @@
         return;
     }
 
-    // ── Ada parameter = mode solver ──
-    document.getElementById('solving-text').textContent = 'Menunggu script Android Worker...';
+    document.getElementById('solving-text').textContent = 'Menunggu script...';
 
-    // ── Fallback: jika Tampermonkey tidak jalan dalam 12 detik ──
     var tmTimeout = setTimeout(function() {
-        var v3Visible = document.getElementById('v3-area').style.display !== 'none';
-        var v2Visible = document.getElementById('v2-area').style.display !== 'none';
-        var sukses = document.getElementById('success-area').style.display !== 'none';
-        
-        if (!v3Visible && !v2Visible && !sukses) {
-            showError('Tampermonkey tidak aktif', 'Pastikan Tampermonkey nyala & @grant diset none.');
+        var v3 = document.getElementById('v3-area').style.display !== 'none';
+        var v2 = document.getElementById('v2-area').style.display !== 'none';
+        var ok = document.getElementById('success-area').style.display !== 'none';
+        if (!v3 && !v2 && !ok) {
+            showError('Tampermonkey tidak aktif',
+                'Aktifkan extension Tampermonkey lalu reload halaman.');
         }
     }, 12000);
 
-    // ── KB_UI: Interface antara solver.html dan Tampermonkey ──
+    // ── Terima token dari V2 iframe via postMessage ──
+    window.addEventListener('message', function(e) {
+        if (!e.data) return;
+        var d = e.data;
+
+        // Token sukses dari iframe V2
+        if (d.type === 'kb_v2_token' && d.token) {
+            console.log('[KB-Solver] Token V2 dari iframe: len=' + d.token.length);
+            if (window.KB_UI && window.KB_UI.onV2Solved) window.KB_UI.onV2Solved();
+            // Kirim token ke Firebase via Tampermonkey (dipanggil dari parent)
+            if (window.KB_SEND_TOKEN) {
+                window.KB_SEND_TOKEN(d.token);
+            }
+        }
+
+        // Error dari iframe V2
+        if (d.type === 'kb_v2_error') {
+            console.log('[KB-Solver] Error V2 dari iframe: ' + d.msg);
+            if (window.KB_UI && window.KB_UI.onV2Error)
+                window.KB_UI.onV2Error(d.msg || 'Widget error');
+        }
+    });
+
+    // KB_UI interface
     window.KB_UI = {
-        // V3 Events
         onV3Load: function() {
             clearTimeout(tmTimeout);
             document.getElementById('solving-text').textContent = 'Solving ReCAPTCHA V3, please wait...';
             document.getElementById('v3-action-info').textContent = 'action: ' + action;
-            document.getElementById('v3-score-num').textContent = '—';
-            document.getElementById('v3-score-sub').textContent = 'Loading script...';
+            document.getElementById('v3-score-num').textContent  = '—';
+            document.getElementById('v3-score-sub').textContent  = 'Loading script...';
             showArea('v3-area');
-            setStep('step-load', 'active');
-            setStep('step-ready', 'pending');
-            setStep('step-exec', 'pending');
-            setStep('step-send', 'pending');
+            setStep('step-load','active');
+            setStep('step-ready','pending');
+            setStep('step-exec','pending');
+            setStep('step-send','pending');
         },
         onV3Ready: function() {
-            setStep('step-load', 'done');
-            setStep('step-ready', 'active');
-            document.getElementById('v3-score-sub').textContent = 'Script loaded, siap...';
+            setStep('step-load','done');
+            setStep('step-ready','active');
+            document.getElementById('v3-score-sub').textContent = 'Script loaded...';
         },
         onV3Execute: function() {
-            setStep('step-ready', 'done');
-            setStep('step-exec', 'active');
+            setStep('step-ready','done');
+            setStep('step-exec','active');
             document.getElementById('v3-score-num').textContent = '...';
             document.getElementById('v3-score-sub').textContent = 'Executing...';
             document.getElementById('solving-text').textContent = 'Menghitung skor V3...';
         },
         onV3Token: function(token) {
-            setStep('step-exec', 'done');
-            setStep('step-send', 'active');
+            setStep('step-exec','done');
+            setStep('step-send','active');
             document.getElementById('v3-score-num').textContent = '✓';
             document.getElementById('v3-score-num').style.color = '#4caf50';
-            document.getElementById('v3-score-sub').textContent = 'Token OK! Mengirim...';
-            document.getElementById('solving-text').textContent = 'Mengirim token ke server...';
+            document.getElementById('v3-score-sub').textContent = 'Token OK!';
+            document.getElementById('solving-text').textContent = 'Mengirim token...';
         },
         onV3Sent: function(token) {
-            setStep('step-send', 'done');
+            setStep('step-send','done');
             showSuccess(token);
         },
         onV3Error: function(msg) {
-            setStep('step-load', 'error');
-            setStep('step-ready', 'error');
-            setStep('step-exec', 'error');
-            setStep('step-send', 'error');
+            setStep('step-load','error');
+            setStep('step-ready','error');
+            setStep('step-exec','error');
+            setStep('step-send','error');
             showError('V3 Error', msg);
         },
 
-        // V2 Events
-        onV2Load: function() {
+        onV2Load: function(sk, pu) {
             clearTimeout(tmTimeout);
             document.getElementById('solving-text').textContent = 'Loading reCAPTCHA V2...';
             document.getElementById('v2-label').textContent = '🔄 Memuat widget...';
             showArea('v2-area');
+
+            // Build iframe srcdoc dengan domain pageUrl
+            // iframe akan render widget dan postMessage token ke parent
+            var targetOrigin = pu ? (new URL(pu)).origin : 'https://www.google.com';
+
+            var iframeHtml = '<!DOCTYPE html>' +
+                '<html><head>' +
+                '<meta charset="UTF-8">' +
+                '<meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+                '<style>' +
+                'body{margin:0;padding:16px;background:#fff;display:flex;' +
+                'flex-direction:column;align-items:center;font-family:Arial,sans-serif;}' +
+                'h3{color:#333;font-size:14px;margin-bottom:12px;text-align:center;}' +
+                'p{color:#888;font-size:11px;text-align:center;margin-top:8px;}' +
+                '</style></head><body>' +
+                '<h3>👆 Tap untuk verifikasi</h3>' +
+                '<div id="rc-widget"></div>' +
+                '<p id="rc-status">Memuat...</p>' +
+                '<script>' +
+                'function onRcLoad(){' +
+                '  document.getElementById("rc-status").textContent="Siap! Tap checkbox.";' +
+                '  try{' +
+                '    grecaptcha.render("rc-widget",{' +
+                '      sitekey:"' + sk + '",' +
+                '      theme:"light",' +
+                '      callback:function(token){' +
+                '        document.getElementById("rc-status").textContent="✅ Solved!";' +
+                '        window.parent.postMessage({type:"kb_v2_token",token:token},"*");' +
+                '      },' +
+                '      "expired-callback":function(){' +
+                '        document.getElementById("rc-status").textContent="⚠️ Expired, ulangi...";' +
+                '      },' +
+                '      "error-callback":function(){' +
+                '        document.getElementById("rc-status").textContent="❌ Error widget";' +
+                '        window.parent.postMessage({type:"kb_v2_error",msg:"Widget error"},"*");' +
+                '      }' +
+                '    });' +
+                '  }catch(e){' +
+                '    window.parent.postMessage({type:"kb_v2_error",msg:e.message},"*");' +
+                '  }' +
+                '}' +
+                '<\/script>' +
+                '<script src="https://www.google.com/recaptcha/api.js?onload=onRcLoad&render=explicit" async defer><\/script>' +
+                '</body></html>';
+
+            var iframeEl = document.getElementById('v2-iframe');
+            iframeEl.srcdoc = iframeHtml;
         },
+
         onV2Ready: function() {
             document.getElementById('solving-text').textContent = '👆 Tap checkbox untuk verifikasi';
             document.getElementById('v2-label').textContent = '👆 Tap checkbox di bawah ini';
             document.getElementById('bb-task').textContent = '⏳ Menunggu user...';
         },
         onV2Solved: function() {
-            document.getElementById('solving-text').textContent = 'V2 solved! Mengirim token...';
-            document.getElementById('v2-label').textContent = '✅ Solved! Mengirim...';
+            document.getElementById('solving-text').textContent = 'V2 solved! Mengirim...';
+            document.getElementById('v2-label').textContent = '✅ Solved! Mengirim token...';
             document.getElementById('bb-task').textContent = '📤 Mengirim...';
         },
         onV2Sent: function(token) {
@@ -466,6 +479,7 @@
             showError('Error', msg);
         }
     };
+
 })();
 </script>
 </body>

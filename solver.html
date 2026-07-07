@@ -17,6 +17,7 @@
             padding-top: 50px;
             padding-bottom: 60px;
         }
+        /* TOP BAR */
         #top-bar {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -46,6 +47,7 @@
             border-radius: 12px;
             font-family: monospace;
         }
+        /* SOLVING TEXT */
         #solving-text {
             font-size: 14px;
             color: #ccc;
@@ -72,8 +74,20 @@
             width: 100%;
             margin-bottom: 16px;
         }
-        #v3-score-top { font-size: 10px; color: #555; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        #v3-score-num { font-size: 64px; font-weight: bold; color: #4caf50; line-height: 1; transition: color 0.4s; }
+        #v3-score-top {
+            font-size: 10px;
+            color: #555;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        #v3-score-num {
+            font-size: 64px;
+            font-weight: bold;
+            color: #4caf50;
+            line-height: 1;
+            transition: color 0.4s;
+        }
         #v3-score-sub { font-size: 11px; color: #555; margin-top: 6px; }
         #v3-action-info { font-size: 11px; color: #444; margin-top: 4px; }
         #v3-steps { width: 100%; font-size: 12px; font-family: monospace; }
@@ -91,15 +105,13 @@
         .step.done { color: #4caf50; background: rgba(76,175,80,0.05); }
         .step.error { color: #f44336; background: rgba(244,67,54,0.05); }
         .step-ico { width: 18px; text-align: center; }
-
-        /* V2 AREA - ✅ FIX: Pastikan terlihat dan scrollable */
+        /* V2 AREA */
         #v2-area {
             display: none;
             flex-direction: column;
             align-items: center;
             width: 100%;
             padding: 0 16px;
-            min-height: 200px; /* ✅ FIX: Minimum height agar widget tidak terpotong */
         }
         #v2-label {
             font-size: 13px;
@@ -114,19 +126,7 @@
             padding: 10px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             display: inline-block;
-            /* ✅ FIX: Pastikan width cukup untuk widget reCAPTCHA (min 304px) */
-            min-width: 310px;
-            min-height: 80px;
-            overflow: visible; /* ✅ FIX: Jangan clip widget */
         }
-        #kb-v2-widget {
-            /* ✅ FIX: Widget harus bisa tampil penuh */
-            min-width: 300px;
-            min-height: 74px;
-        }
-        /* ✅ FIX: Container iframe reCAPTCHA challenge popup */
-        .g-recaptcha-bubble-arrow { z-index: 99999 !important; }
-
         /* SUCCESS */
         #success-area {
             display: none;
@@ -153,7 +153,6 @@
             width: 100%;
         }
         #countdown { font-size: 40px; font-weight: bold; color: #4caf50; margin: 8px 0; }
-
         /* ERROR */
         #error-area {
             display: none;
@@ -164,7 +163,6 @@
         }
         #error-area h3 { color: #f44336; margin-bottom: 8px; font-size: 18px; }
         #error-area p { color: #666; font-size: 12px; }
-
         /* NO PARAMS */
         #no-params {
             display: none;
@@ -176,7 +174,6 @@
         #no-params .big-icon { font-size: 70px; }
         #no-params h2 { color: #ff9800; margin-bottom: 10px; }
         #no-params p { color: #555; font-size: 12px; line-height: 1.8; }
-
         /* BOTTOM BAR */
         #bottom-bar {
             position: fixed;
@@ -191,7 +188,6 @@
             font-size: 10px;
             color: #444;
         }
-
         /* SPINNER */
         .spin {
             display: inline-block;
@@ -203,7 +199,6 @@
             vertical-align: middle;
         }
         @keyframes sp { to { transform: rotate(360deg); } }
-
         /* DOT PULSE */
         .dot-pulse {
             display: inline-block;
@@ -217,11 +212,6 @@
         @keyframes pulse {
             0%,100% { opacity:1; transform:scale(1); }
             50% { opacity:0.4; transform:scale(0.7); }
-        }
-
-        /* ✅ FIX V2: Override iframe reCAPTCHA agar tidak di-clip */
-        iframe[src*="recaptcha"] {
-            border: none !important;
         }
     </style>
 </head>
@@ -262,14 +252,9 @@
 
 <!-- V2 AREA -->
 <div id="v2-area">
-    <div id="v2-label">🔄 Memuat widget reCAPTCHA V2...</div>
-    <!-- ✅ FIX: Widget wrap dengan ukuran yang cukup -->
+    <div id="v2-label">👆 Tap checkbox untuk verifikasi</div>
     <div id="v2-widget-wrap">
         <div id="kb-v2-widget"></div>
-    </div>
-    <!-- ✅ FIX: Instruksi jelas untuk user -->
-    <div id="v2-hint" style="margin-top:14px;font-size:11px;color:#555;text-align:center;font-family:monospace;padding:0 10px;">
-        Jika muncul challenge gambar, selesaikan dulu<br>lalu token akan otomatis terkirim
     </div>
 </div>
 
@@ -293,19 +278,18 @@
 <div id="no-params">
     <div class="big-icon">🤖</div>
     <h2>KB Captcha Solver</h2>
-    <p>Halaman ini diakses otomatis<br>oleh script Tampermonkey Android.<br><br>
-    <span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span><br>
-    Buka halaman ini di Kiwi Browser<br>dan biarkan terbuka sebagai standby.</p>
+    <p>Halaman ini diakses otomatis<br>oleh script Tampermonkey Android.<br><br><span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span><br>Buka halaman ini di Kiwi Browser<br>dan biarkan terbuka sebagai standby.</p>
 </div>
 
 <!-- BOTTOM BAR -->
 <div id="bottom-bar">
     <span id="bb-task">Task: -</span>
-    <span id="bb-ver">KB Solver UI v7.6</span>
+    <span id="bb-ver">KB Solver UI v7.5</span>
 </div>
 
 <script>
 (function() {
+    // ── Ambil parameter URL ──
     var params = new URLSearchParams(window.location.search);
     var taskId = params.get('kb_task_id') || '';
     var type = (params.get('kb_type') || '').toLowerCase();
@@ -314,10 +298,12 @@
     var isEnterprise = params.get('kb_enterprise') === '1';
     var pageUrl = params.get('kb_page_url') || '';
 
+    // ── Update top bar & bottom bar ──
     document.getElementById('top-type').textContent = type ? type.toUpperCase() : '?';
     document.getElementById('top-site').textContent = pageUrl || 'KB Captcha Solver';
     document.getElementById('bb-task').textContent = taskId ? ('Task: ' + taskId) : 'Standby';
 
+    // ── Helper: tampilkan area ──
     var areas = ['v3-area','v2-area','success-area','error-area','no-params'];
     function showArea(id) {
         areas.forEach(function(a) {
@@ -328,12 +314,14 @@
         if (target) target.style.display = 'flex';
     }
 
+    // ── Helper: update step ──
     function setStep(id, state) {
         var el = document.getElementById(id);
         if (!el) return;
         el.className = 'step ' + state;
         var ico = el.querySelector('.step-ico');
         if (!ico) return;
+        
         if (state === 'active') {
             ico.innerHTML = '<span class="spin"></span>';
         } else if (state === 'done') {
@@ -346,17 +334,19 @@
         }
     }
 
+    // Fungsi reset halaman (Anti-Nyangkut)
     function backToStandby() {
         window.location.replace(window.location.pathname);
     }
 
+    // ── Helper: success ──
     function showSuccess(token) {
         showArea('success-area');
         document.getElementById('solving-text').textContent = '✅ Selesai!';
         document.getElementById('bb-task').textContent = '✅ Token terkirim!';
         var preview = token.length > 40 ? token.substr(0, 28) + '...' + token.substr(-10) : token;
         document.getElementById('token-preview').textContent = '🔑 ' + preview;
-
+        
         var n = 3;
         document.getElementById('countdown').textContent = n;
         var cd = setInterval(function() {
@@ -369,15 +359,18 @@
         }, 1000);
     }
 
+    // ── Helper: error ──
     function showError(title, msg) {
         showArea('error-area');
         document.getElementById('error-title').textContent = title || 'Error';
         document.getElementById('error-msg').textContent = msg || '';
         document.getElementById('solving-text').textContent = '❌ ' + (title || 'Error');
         document.getElementById('bb-task').textContent = '❌ Error';
-        setTimeout(function() { backToStandby(); }, 6000);
+        
+        setTimeout(function() { backToStandby(); }, 5000);
     }
 
+    // ── Tidak ada parameter = standby / akses manual ──
     if (!taskId || !type || !sitekey) {
         document.getElementById('solving-text').textContent = 'Standby...';
         document.getElementById('top-type').textContent = '?';
@@ -385,18 +378,21 @@
         return;
     }
 
+    // ── Ada parameter = mode solver ──
     document.getElementById('solving-text').textContent = 'Menunggu script Android Worker...';
 
-    // Fallback timeout
+    // ── Fallback: jika Tampermonkey tidak jalan dalam 12 detik ──
     var tmTimeout = setTimeout(function() {
-        var v3Vis = document.getElementById('v3-area').style.display !== 'none';
-        var v2Vis = document.getElementById('v2-area').style.display !== 'none';
+        var v3Visible = document.getElementById('v3-area').style.display !== 'none';
+        var v2Visible = document.getElementById('v2-area').style.display !== 'none';
         var sukses = document.getElementById('success-area').style.display !== 'none';
-        if (!v3Vis && !v2Vis && !sukses) {
+        
+        if (!v3Visible && !v2Visible && !sukses) {
             showError('Tampermonkey tidak aktif', 'Pastikan Tampermonkey nyala & @grant diset none.');
         }
     }, 12000);
 
+    // ── KB_UI: Interface antara solver.html dan Tampermonkey ──
     window.KB_UI = {
         // V3 Events
         onV3Load: function() {

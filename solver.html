@@ -48,7 +48,6 @@
             font-size: 13px; color: #aaa; margin-bottom: 14px;
             text-align: center; font-family: monospace;
         }
-        /* Widget container - background putih seperti aslinya */
         #v2-widget-container {
             background: #fff;
             border-radius: 4px;
@@ -63,17 +62,9 @@
             width: 100%; max-width: 340px; padding: 30px 16px;
             text-align: center;
         }
-        #v3-logo {
-            font-size: 72px; margin-bottom: 16px;
-        }
-        #v3-status {
-            font-size: 14px; color: #aaa; font-family: monospace;
-            margin-bottom: 8px;
-        }
-        #v3-sitekey-info {
-            font-size: 10px; color: #444; font-family: monospace;
-            word-break: break-all; padding: 0 20px;
-        }
+        #v3-logo { font-size: 72px; margin-bottom: 16px; }
+        #v3-status { font-size: 14px; color: #aaa; font-family: monospace; margin-bottom: 8px; }
+        #v3-sitekey-info { font-size: 10px; color: #444; font-family: monospace; word-break: break-all; padding: 0 20px; }
         .spin-ring {
             display: inline-block; width: 48px; height: 48px;
             border: 4px solid #333; border-top-color: #00bcd4;
@@ -105,7 +96,7 @@
         #error-area h3 { color: #f44336; margin-bottom: 8px; font-size: 18px; }
         #error-area p { color: #666; font-size: 12px; }
 
-        /* ── NO PARAMS ── */
+        /* ── NO PARAMS (STANDBY) ── */
         #no-params {
             display: none; flex-direction: column; align-items: center;
             text-align: center; padding: 20px;
@@ -122,7 +113,6 @@
             border-top: 1px solid #222; font-family: monospace;
             font-size: 10px; color: #444;
         }
-
         .spin {
             display: inline-block; width: 12px; height: 12px;
             border: 2px solid #333; border-top-color: #ffeb3b;
@@ -139,16 +129,15 @@
 
 <div id="solving-text">Memuat...</div>
 
-<!-- V2 AREA: Widget reCAPTCHA asli -->
+<!-- V2 AREA -->
 <div id="v2-area">
     <div id="v2-label">👆 Tap checkbox untuk verifikasi</div>
     <div id="v2-widget-container">
-        <!-- Widget akan di-inject dinamis oleh script -->
         <div id="kb-recaptcha"></div>
     </div>
 </div>
 
-<!-- V3 AREA: Hanya logo + status -->
+<!-- V3 AREA -->
 <div id="v3-area">
     <div class="spin-ring"></div>
     <div id="v3-logo">🤖</div>
@@ -172,7 +161,7 @@
     <p id="error-msg">Terjadi kesalahan</p>
 </div>
 
-<!-- NO PARAMS -->
+<!-- NO PARAMS (STANDBY) -->
 <div id="no-params">
     <div class="big-icon">🤖</div>
     <h2>KB Captcha Solver</h2>
@@ -184,7 +173,7 @@
 <!-- BOTTOM BAR -->
 <div id="bottom-bar">
     <span id="bb-task">Task: -</span>
-    <span id="bb-ver">KB Solver v7.8</span>
+    <span id="bb-ver">KB Solver v7.9</span>
 </div>
 
 <script>
@@ -198,7 +187,7 @@
     var action   = params.get('kb_action')    || 'submit';
     var isEnt    = params.get('kb_enterprise') === '1';
     var pageUrl  = params.get('kb_page_url')  || '';
-    var fbUrl    = params.get('kb_fb')        || 'https://kb-relay-default-rtdb.asiasoutheast1.firebasedatabase.app';
+    var fbUrl    = params.get('kb_fb')        || 'https://kb-relay-default-rtdb.asia-southeast1.firebasedatabase.app';
 
     // Update UI bars
     document.getElementById('top-type').textContent = type ? type.toUpperCase() : '?';
@@ -251,9 +240,9 @@
         return;
     }
 
-    // ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
     // KIRIM TOKEN KE FIREBASE
-    // ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
     var tokenSent = false;
 
     function sendTokenToFirebase(token) {
@@ -271,7 +260,6 @@
         .then(function(r) {
             if (r.ok) {
                 console.log('[KB Solver] ✅ Token terkirim ke Firebase!');
-                // Hapus dari queue
                 fetch(fbUrl + '/queue/' + taskId + '.json', { method: 'DELETE' }).catch(function(){});
                 showSuccess(token);
             } else {
@@ -285,46 +273,36 @@
         });
     }
 
-    // ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
     // LISTEN postMessage dari reCAPTCHA
-    // (Format sama persis dengan Kolo: proxyGateResult)
-    // ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
     window.addEventListener('message', function(event) {
         if (tokenSent) return;
         var d = event.data;
         if (!d) return;
 
-        // Format Kolo: { type: "proxyGateResult", hash: token, ... }
         if (d.type === 'proxyGateResult' && d.hash && d.hash.length > 20) {
             console.log('[KB Solver] ✅ Token dari postMessage (proxyGateResult)');
             sendTokenToFirebase(d.hash);
             return;
         }
-        // Format error
         if (d.type === 'proxyGateError') {
             console.log('[KB Solver] ❌ proxyGateError: ' + d.error);
             if (!tokenSent) showError('reCAPTCHA Error', d.error || 'Unknown error');
         }
     });
 
-    // ─────────────────────────────────────────────
-    // SOLVE V2
-    // ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
+    // SOLVE V2 (fallback)
+    // ──────────────────────────────────────────────────────────
     if (type === 'v2') {
         showArea('v2-area');
         document.getElementById('solving-text').textContent = 'Loading reCAPTCHA V2...';
         document.getElementById('v2-label').textContent = '🔄 Memuat widget...';
 
-        // ✅ Tiru PERSIS cara Kolo:
-        // 1. Daftarkan callback global postRecaptchaMessageJs
-        // 2. Load api.js dengan data-callback ke fungsi itu
-        // 3. Token dikirim via postMessage proxyGateResult
-
         window.postRecaptchaMessageJs = function(token) {
             console.log('[KB Solver] ✅ V2 callback dipanggil! len=' + token.length);
-            // Tiru delay Kolo
-            var delay = 0;
-            if (token.substring(0, 3) !== '03A') { delay = 1000; }
+            var delay = (token.substring(0, 3) !== '03A') ? 1000 : 0;
             setTimeout(function() {
                 window.postMessage({
                     type: 'proxyGateResult',
@@ -336,16 +314,12 @@
             }, delay);
         };
 
-        // Buat div g-recaptcha dengan data-callback
         var recaptchaDiv = document.getElementById('kb-recaptcha');
         recaptchaDiv.className = 'g-recaptcha';
         recaptchaDiv.setAttribute('data-sitekey', sitekey);
         recaptchaDiv.setAttribute('data-callback', 'postRecaptchaMessageJs');
         if (isEnt) recaptchaDiv.setAttribute('data-enterprise', 'true');
 
-        // Load script reCAPTCHA V2
-        // ✅ KUNCI: gunakan ?onload=onV2Load&render=explicit
-        // supaya kita bisa kontrol kapan render
         window.onV2Load = function() {
             console.log('[KB Solver] reCAPTCHA V2 script loaded');
             try {
@@ -355,11 +329,6 @@
                     callback: window.postRecaptchaMessageJs,
                     'expired-callback': function() {
                         document.getElementById('v2-label').textContent = '⚠️ Expired, klik lagi';
-                    },
-                    'error-callback': function() {
-                        // Error sering karena sitekey domain restriction
-                        // Coba fallback dengan method auto-load
-                        console.log('[KB Solver] Widget error, coba auto-load...');
                     }
                 });
                 document.getElementById('solving-text').textContent = '👆 Tap checkbox untuk verifikasi';
@@ -367,14 +336,12 @@
                 document.getElementById('bb-task').textContent = '⏳ Menunggu user...';
             } catch(e) {
                 console.log('[KB Solver] render error: ' + e.message);
-                // Fallback: biarkan auto-render dari data-sitekey & data-callback
                 document.getElementById('solving-text').textContent = '👆 Tap checkbox untuk verifikasi';
                 document.getElementById('v2-label').textContent = '👆 Tap checkbox di bawah ini';
             }
         };
 
         var sc = document.createElement('script');
-        // ✅ Coba dengan onload callback dulu
         sc.src = 'https://www.google.com/recaptcha/api.js?onload=onV2Load&render=explicit';
         sc.async = true;
         sc.defer = true;
@@ -383,22 +350,18 @@
         };
         (document.head || document.body).appendChild(sc);
 
-        // Timeout V2: 3 menit (user perlu solve manual)
         setTimeout(function() {
             if (!tokenSent) showError('Timeout V2', 'Terlalu lama menunggu');
         }, 180000);
     }
 
-    // ─────────────────────────────────────────────
-    // SOLVE V3
-    // ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
+    // SOLVE V3 (fallback)
+    // ──────────────────────────────────────────────────────────
     if (type === 'v3') {
         showArea('v3-area');
         document.getElementById('solving-text').textContent = 'Solving ReCAPTCHA v3, please wait...';
         document.getElementById('v3-sitekey-info').textContent = sitekey.substring(0,20) + '...';
-
-        // ✅ Tiru PERSIS cara Kolo V3:
-        // onloadCallback → grecaptcha.ready → execute → postMessage proxyGateResult
 
         function reportError(message) {
             if (message && message.indexOf('Invalid site key') !== -1)
@@ -427,8 +390,7 @@
                             return;
                         }
                         console.log('[KB Solver] ✅ V3 token len=' + token.length);
-                        var delay = 0;
-                        if (token.substring(0, 3) !== '03A') { delay = 1000; }
+                        var delay = (token.substring(0, 3) !== '03A') ? 1000 : 0;
                         setTimeout(function() {
                             window.postMessage({
                                 type: 'proxyGateResult',
@@ -448,7 +410,6 @@
             });
         };
 
-        // Load script V3
         var apiUrl = isEnt
             ? 'https://www.google.com/recaptcha/enterprise.js?onload=onloadCallback&render=' + sitekey
             : 'https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=' + sitekey;
@@ -462,7 +423,6 @@
         };
         (document.head || document.body).appendChild(scV3);
 
-        // Update UI saat token berhasil
         window.addEventListener('message', function(ev) {
             if (ev.data && ev.data.type === 'proxyGateResult') {
                 document.getElementById('v3-logo').textContent = '✅';
@@ -470,7 +430,6 @@
             }
         });
 
-        // Timeout V3: 45 detik
         setTimeout(function() {
             if (!tokenSent) {
                 reportError('Timeout - tidak ada token dalam 45 detik');

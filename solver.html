@@ -3,68 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
-    <title>KB Solver Frame</title>
+    <title>KB Solver v9</title>
     <style>
-        body { 
-            background: #1B1D25; color: #eaeaea; font-family: monospace; 
-            display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; height: 100vh; margin: 0; 
-        }
-        #status-text { font-size: 14px; margin-bottom: 20px; color: #aaa; text-align: center; }
+        body { background: #1a1a1a; color: #fff; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #box { background: #222; padding: 20px; border-radius: 10px; border: 1px solid #444; text-align: center; min-width: 250px; }
+        .success { color: #4caf50; font-weight: bold; }
+        .wait { color: #ff9800; }
     </style>
 </head>
 <body>
-    <div id="status-text">Menyiapkan Environment...</div>
-    <div id="captcha-container"></div>
+    <div id="box">
+        <h3 style="margin:0 0 10px 0;color:#00bcd4;">KB Solver v9</h3>
+        <div id="info" class="wait">Memeriksa Task...</div>
+        <div id="captcha-area" style="margin-top:15px;min-height:80px;display:flex;justify-content:center;"></div>
+    </div>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const type = (params.get('kb_type') || 'v3').toLowerCase();
-        const sitekey = params.get('kb_sitekey');
-        const action = params.get('kb_action') || 'submit';
-        const st = document.getElementById('status-text');
+        const FIREBASE_URL = "https://kb-relay-default-rtdb.asia-southeast1.firebasedatabase.app";
+        const p = new URLSearchParams(window.location.search);
+        const tId = p.get('id');
+        const type = p.get('type');
+        const sitekey = p.get('sitekey');
+        const info = document.getElementById('info');
 
-        if (!sitekey) {
-            st.innerHTML = "Standby Ready.<br><br><small>Halaman ini untuk worker otomatis.</small>";
+        async function sendTokenAndBack(token) {
+            info.innerHTML = "Mengirim Token ke Firebase...";
+            info.className = "wait";
+            // Tulis token ke FB
+            await fetch(`${FIREBASE_URL}/tokens/${tId}.json`, { 
+                method: 'PUT', body: JSON.stringify({ token: token, ts: Date.now() }) 
+            });
+            // Hapus dari queue
+            await fetch(`${FIREBASE_URL}/queue/${tId}.json`, { method: 'DELETE' });
+            
+            info.innerHTML = "✅ Selesai! Kembali...";
+            info.className = "success";
+            setTimeout(() => { window.history.back(); }, 1000);
+        }
+
+        if (!tId || !sitekey) {
+            info.innerHTML = "Standby Ready.<br><span style='font-size:10px;color:#666;'>Tunggu Worker Tampermonkey.</span>";
         } else {
-            st.innerHTML = `⚙️ Solving ${type.toUpperCase()}<br><small style="color:#555">${sitekey}</small>`;
-
             if (type === 'v3') {
-                // MURNI API V3 (Tanpa UI berat)
-                const script = document.createElement('script');
-                script.src = `https://www.google.com/recaptcha/api.js?render=${sitekey}`;
-                document.head.appendChild(script);
-
-                script.onload = () => {
+                info.innerHTML = `Solving V3<br><span style='font-size:10px;color:#888'>${sitekey}</span>`;
+                
+                const s = document.createElement('script');
+                s.src = `https://www.google.com/recaptcha/api.js?render=${sitekey}`;
+                document.head.appendChild(s);
+                
+                s.onload = () => {
                     grecaptcha.ready(() => {
-                        grecaptcha.execute(sitekey, { action: action }).then((token) => {
-                            st.innerHTML = `✅ Execute OK!<br><span style="color:#4caf50;font-size:10px;">Token: ${token.substring(0, 15)}...</span>`;
-                            // Post message akan ditangkap oleh Android Worker
-                            window.postMessage({ type: "proxyGateResult", hash: token }, "*");
-                        }).catch(e => {
-                            st.innerHTML = `❌ Error Execute: ${e.message}`;
+                        grecaptcha.execute(sitekey, { action: 'submit' }).then(token => {
+                            sendTokenAndBack(token);
                         });
                     });
                 };
-
-            } else if (type === 'v2') {
-                // MURNI IFRAME V2 (Persis web newtab kolo)
-                st.innerHTML = `👆 Tap Checkbox V2 Dibawah`;
+            } 
+            else if (type === 'v2') {
+                info.innerHTML = `Centang Checkbox Dibawah`;
                 
-                window.postRecaptchaMessageJs = function(token) {
-                    st.innerHTML = `✅ V2 Solved!<br><span style="color:#4caf50;font-size:10px;">Token: ${token.substring(0, 15)}...</span>`;
-                    window.postMessage({ type: "proxyGateResult", hash: token }, "*");
+                // Callback yg dipanggil otomatis oleh Google V2
+                window.onV2Success = function(token) {
+                    sendTokenAndBack(token);
                 };
 
                 const div = document.createElement('div');
                 div.className = "g-recaptcha";
                 div.setAttribute("data-sitekey", sitekey);
-                div.setAttribute("data-callback", "postRecaptchaMessageJs");
-                document.getElementById('captcha-container').appendChild(div);
+                div.setAttribute("data-callback", "onV2Success");
+                document.getElementById('captcha-area').appendChild(div);
 
-                const script = document.createElement('script');
-                script.src = "https://www.google.com/recaptcha/api.js";
-                document.head.appendChild(script);
+                const s = document.createElement('script');
+                s.src = "https://www.google.com/recaptcha/api.js";
+                document.head.appendChild(s);
             }
         }
     </script>

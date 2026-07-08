@@ -6,7 +6,6 @@
     <title>KB Solver</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             background: #1B1D25;
             color: #eaeaea;
@@ -18,7 +17,6 @@
             padding-top: 50px;
             padding-bottom: 60px;
         }
-
         /* TOP BAR */
         #top-bar {
             position: fixed;
@@ -49,7 +47,6 @@
             border-radius: 12px;
             font-family: monospace;
         }
-
         /* SOLVING TEXT */
         #solving-text {
             font-size: 14px;
@@ -59,7 +56,6 @@
             padding: 0 20px;
             font-family: monospace;
         }
-
         /* V3 AREA */
         #v3-area {
             display: none;
@@ -92,21 +88,9 @@
             line-height: 1;
             transition: color 0.4s;
         }
-        #v3-score-sub {
-            font-size: 11px;
-            color: #555;
-            margin-top: 6px;
-        }
-        #v3-action-info {
-            font-size: 11px;
-            color: #444;
-            margin-top: 4px;
-        }
-        #v3-steps {
-            width: 100%;
-            font-size: 12px;
-            font-family: monospace;
-        }
+        #v3-score-sub { font-size: 11px; color: #555; margin-top: 6px; }
+        #v3-action-info { font-size: 11px; color: #444; margin-top: 4px; }
+        #v3-steps { width: 100%; font-size: 12px; font-family: monospace; }
         .step {
             display: flex;
             align-items: center;
@@ -117,11 +101,10 @@
             transition: all 0.3s;
         }
         .step.pending { color: #333; }
-        .step.active  { color: #ffeb3b; background: rgba(255,235,59,0.05); }
-        .step.done    { color: #4caf50; background: rgba(76,175,80,0.05); }
-        .step.error   { color: #f44336; background: rgba(244,67,54,0.05); }
+        .step.active { color: #ffeb3b; background: rgba(255,235,59,0.05); }
+        .step.done { color: #4caf50; background: rgba(76,175,80,0.05); }
+        .step.error { color: #f44336; background: rgba(244,67,54,0.05); }
         .step-ico { width: 18px; text-align: center; }
-
         /* V2 AREA */
         #v2-area {
             display: none;
@@ -144,7 +127,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             display: inline-block;
         }
-
         /* SUCCESS */
         #success-area {
             display: none;
@@ -157,7 +139,7 @@
         }
         .big-icon { font-size: 64px; margin-bottom: 12px; }
         #success-area h2 { color: #4caf50; margin-bottom: 8px; font-size: 20px; }
-        #success-area p  { color: #555; font-size: 12px; }
+        #success-area p { color: #555; font-size: 12px; }
         #token-preview {
             margin: 12px 0;
             background: #0d1a0d;
@@ -170,13 +152,7 @@
             font-family: monospace;
             width: 100%;
         }
-        #countdown {
-            font-size: 40px;
-            font-weight: bold;
-            color: #4caf50;
-            margin: 8px 0;
-        }
-
+        #countdown { font-size: 40px; font-weight: bold; color: #4caf50; margin: 8px 0; }
         /* ERROR */
         #error-area {
             display: none;
@@ -186,8 +162,7 @@
             padding: 0 20px;
         }
         #error-area h3 { color: #f44336; margin-bottom: 8px; font-size: 18px; }
-        #error-area p  { color: #666; font-size: 12px; }
-
+        #error-area p { color: #666; font-size: 12px; }
         /* NO PARAMS */
         #no-params {
             display: none;
@@ -198,8 +173,7 @@
         }
         #no-params .big-icon { font-size: 70px; }
         #no-params h2 { color: #ff9800; margin-bottom: 10px; }
-        #no-params p  { color: #555; font-size: 12px; line-height: 1.8; }
-
+        #no-params p { color: #555; font-size: 12px; line-height: 1.8; }
         /* BOTTOM BAR */
         #bottom-bar {
             position: fixed;
@@ -214,7 +188,6 @@
             font-size: 10px;
             color: #444;
         }
-
         /* SPINNER */
         .spin {
             display: inline-block;
@@ -226,7 +199,6 @@
             vertical-align: middle;
         }
         @keyframes sp { to { transform: rotate(360deg); } }
-
         /* DOT PULSE */
         .dot-pulse {
             display: inline-block;
@@ -239,7 +211,7 @@
         }
         @keyframes pulse {
             0%,100% { opacity:1; transform:scale(1); }
-            50%      { opacity:0.4; transform:scale(0.7); }
+            50% { opacity:0.4; transform:scale(0.7); }
         }
     </style>
 </head>
@@ -264,20 +236,16 @@
     </div>
     <div id="v3-steps">
         <div class="step pending" id="step-load">
-            <span class="step-ico">📥</span>
-            <span>Load reCAPTCHA script</span>
+            <span class="step-ico">📥</span><span>Load reCAPTCHA script</span>
         </div>
         <div class="step pending" id="step-ready">
-            <span class="step-ico">⚙️</span>
-            <span>grecaptcha.ready()</span>
+            <span class="step-ico">⚙️</span><span>grecaptcha.ready()</span>
         </div>
         <div class="step pending" id="step-exec">
-            <span class="step-ico">⚡</span>
-            <span>Execute & get token</span>
+            <span class="step-ico">⚡</span><span>Execute & get token</span>
         </div>
         <div class="step pending" id="step-send">
-            <span class="step-ico">📤</span>
-            <span>Kirim ke Firebase</span>
+            <span class="step-ico">📤</span><span>Kirim ke Firebase</span>
         </div>
     </div>
 </div>
@@ -310,37 +278,30 @@
 <div id="no-params">
     <div class="big-icon">🤖</div>
     <h2>KB Captcha Solver</h2>
-    <p>
-        Halaman ini diakses otomatis<br>
-        oleh script Tampermonkey Android.<br><br>
-        <span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span><br>
-        Buka halaman ini di Kiwi Browser<br>
-        dan biarkan terbuka sebagai standby.
-    </p>
+    <p>Halaman ini diakses otomatis<br>oleh script Tampermonkey Android.<br><br><span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span><br>Buka halaman ini di Kiwi Browser<br>dan biarkan terbuka sebagai standby.</p>
 </div>
 
 <!-- BOTTOM BAR -->
 <div id="bottom-bar">
     <span id="bb-task">Task: -</span>
-    <span id="bb-ver">KB Solver v7.4</span>
+    <span id="bb-ver">KB Solver UI v7.5</span>
 </div>
 
 <script>
 (function() {
-
     // ── Ambil parameter URL ──
-    var params       = new URLSearchParams(window.location.search);
-    var taskId       = params.get('kb_task_id')   || '';
-    var type         = (params.get('kb_type')     || '').toLowerCase();
-    var sitekey      = params.get('kb_sitekey')   || '';
-    var action       = params.get('kb_action')    || 'submit';
+    var params = new URLSearchParams(window.location.search);
+    var taskId = params.get('kb_task_id') || '';
+    var type = (params.get('kb_type') || '').toLowerCase();
+    var sitekey = params.get('kb_sitekey') || '';
+    var action = params.get('kb_action') || 'submit';
     var isEnterprise = params.get('kb_enterprise') === '1';
-    var pageUrl      = params.get('kb_page_url')  || '';
+    var pageUrl = params.get('kb_page_url') || '';
 
     // ── Update top bar & bottom bar ──
     document.getElementById('top-type').textContent = type ? type.toUpperCase() : '?';
     document.getElementById('top-site').textContent = pageUrl || 'KB Captcha Solver';
-    document.getElementById('bb-task').textContent  = taskId ? ('Task: ' + taskId) : 'Standby';
+    document.getElementById('bb-task').textContent = taskId ? ('Task: ' + taskId) : 'Standby';
 
     // ── Helper: tampilkan area ──
     var areas = ['v3-area','v2-area','success-area','error-area','no-params'];
@@ -360,6 +321,7 @@
         el.className = 'step ' + state;
         var ico = el.querySelector('.step-ico');
         if (!ico) return;
+        
         if (state === 'active') {
             ico.innerHTML = '<span class="spin"></span>';
         } else if (state === 'done') {
@@ -367,15 +329,14 @@
         } else if (state === 'error') {
             ico.textContent = '❌';
         } else {
-            // restore original
-            var origMap = {
-                'step-load':  '📥',
-                'step-ready': '⚙️',
-                'step-exec':  '⚡',
-                'step-send':  '📤'
-            };
+            var origMap = { 'step-load': '📥', 'step-ready': '⚙️', 'step-exec': '⚡', 'step-send': '📤' };
             ico.textContent = origMap[id] || '•';
         }
+    }
+
+    // Fungsi reset halaman (Anti-Nyangkut)
+    function backToStandby() {
+        window.location.replace(window.location.pathname);
     }
 
     // ── Helper: success ──
@@ -383,12 +344,9 @@
         showArea('success-area');
         document.getElementById('solving-text').textContent = '✅ Selesai!';
         document.getElementById('bb-task').textContent = '✅ Token terkirim!';
-
-        var preview = token.length > 40
-            ? token.substr(0, 28) + '...' + token.substr(-10)
-            : token;
+        var preview = token.length > 40 ? token.substr(0, 28) + '...' + token.substr(-10) : token;
         document.getElementById('token-preview').textContent = '🔑 ' + preview;
-
+        
         var n = 3;
         document.getElementById('countdown').textContent = n;
         var cd = setInterval(function() {
@@ -396,7 +354,7 @@
             document.getElementById('countdown').textContent = n;
             if (n <= 0) {
                 clearInterval(cd);
-                window.history.back();
+                backToStandby();
             }
         }, 1000);
     }
@@ -405,11 +363,11 @@
     function showError(title, msg) {
         showArea('error-area');
         document.getElementById('error-title').textContent = title || 'Error';
-        document.getElementById('error-msg').textContent   = msg   || '';
+        document.getElementById('error-msg').textContent = msg || '';
         document.getElementById('solving-text').textContent = '❌ ' + (title || 'Error');
         document.getElementById('bb-task').textContent = '❌ Error';
-        // Kembali setelah 5 detik
-        setTimeout(function() { window.history.back(); }, 5000);
+        
+        setTimeout(function() { backToStandby(); }, 5000);
     }
 
     // ── Tidak ada parameter = standby / akses manual ──
@@ -418,48 +376,42 @@
         document.getElementById('top-type').textContent = '?';
         showArea('no-params');
         return;
-        // Tampermonkey (standby polling) tetap jalan di background
     }
 
     // ── Ada parameter = mode solver ──
-    document.getElementById('solving-text').textContent = 'Menunggu script...';
+    document.getElementById('solving-text').textContent = 'Menunggu script Android Worker...';
 
     // ── Fallback: jika Tampermonkey tidak jalan dalam 12 detik ──
     var tmTimeout = setTimeout(function() {
-        // Cek apakah sudah ada progress (area sudah berubah)
         var v3Visible = document.getElementById('v3-area').style.display !== 'none';
         var v2Visible = document.getElementById('v2-area').style.display !== 'none';
-        var sukses    = document.getElementById('success-area').style.display !== 'none';
+        var sukses = document.getElementById('success-area').style.display !== 'none';
+        
         if (!v3Visible && !v2Visible && !sukses) {
-            showError('Tampermonkey tidak aktif',
-                'Aktifkan extension Tampermonkey lalu reload halaman ini.');
+            showError('Tampermonkey tidak aktif', 'Pastikan Tampermonkey nyala & @grant diset none.');
         }
     }, 12000);
 
     // ── KB_UI: Interface antara solver.html dan Tampermonkey ──
     window.KB_UI = {
-
         // V3 Events
         onV3Load: function() {
             clearTimeout(tmTimeout);
-            document.getElementById('solving-text').textContent =
-                'Solving ReCAPTCHA V3, please wait...';
+            document.getElementById('solving-text').textContent = 'Solving ReCAPTCHA V3, please wait...';
             document.getElementById('v3-action-info').textContent = 'action: ' + action;
-            document.getElementById('v3-score-num').textContent  = '—';
-            document.getElementById('v3-score-sub').textContent  = 'Loading script...';
+            document.getElementById('v3-score-num').textContent = '—';
+            document.getElementById('v3-score-sub').textContent = 'Loading script...';
             showArea('v3-area');
             setStep('step-load', 'active');
             setStep('step-ready', 'pending');
             setStep('step-exec', 'pending');
             setStep('step-send', 'pending');
         },
-
         onV3Ready: function() {
             setStep('step-load', 'done');
             setStep('step-ready', 'active');
             document.getElementById('v3-score-sub').textContent = 'Script loaded, siap...';
         },
-
         onV3Execute: function() {
             setStep('step-ready', 'done');
             setStep('step-exec', 'active');
@@ -467,7 +419,6 @@
             document.getElementById('v3-score-sub').textContent = 'Executing...';
             document.getElementById('solving-text').textContent = 'Menghitung skor V3...';
         },
-
         onV3Token: function(token) {
             setStep('step-exec', 'done');
             setStep('step-send', 'active');
@@ -476,17 +427,15 @@
             document.getElementById('v3-score-sub').textContent = 'Token OK! Mengirim...';
             document.getElementById('solving-text').textContent = 'Mengirim token ke server...';
         },
-
         onV3Sent: function(token) {
             setStep('step-send', 'done');
             showSuccess(token);
         },
-
         onV3Error: function(msg) {
-            setStep('step-load',  'error');
+            setStep('step-load', 'error');
             setStep('step-ready', 'error');
-            setStep('step-exec',  'error');
-            setStep('step-send',  'error');
+            setStep('step-exec', 'error');
+            setStep('step-send', 'error');
             showError('V3 Error', msg);
         },
 
@@ -497,35 +446,27 @@
             document.getElementById('v2-label').textContent = '🔄 Memuat widget...';
             showArea('v2-area');
         },
-
         onV2Ready: function() {
             document.getElementById('solving-text').textContent = '👆 Tap checkbox untuk verifikasi';
             document.getElementById('v2-label').textContent = '👆 Tap checkbox di bawah ini';
             document.getElementById('bb-task').textContent = '⏳ Menunggu user...';
         },
-
         onV2Solved: function() {
             document.getElementById('solving-text').textContent = 'V2 solved! Mengirim token...';
             document.getElementById('v2-label').textContent = '✅ Solved! Mengirim...';
             document.getElementById('bb-task').textContent = '📤 Mengirim...';
         },
-
         onV2Sent: function(token) {
             showSuccess(token);
         },
-
         onV2Error: function(msg) {
             showError('V2 Error', msg);
         },
-
-        // Generic error
         onError: function(msg) {
             showError('Error', msg);
         }
     };
-
 })();
 </script>
-
 </body>
 </html>

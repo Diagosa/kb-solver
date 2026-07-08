@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
-    <title>KB Solver v9</title>
+    <title>KB Solver v10</title>
     <style>
         body { background: #1a1a1a; color: #fff; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         #box { background: #222; padding: 20px; border-radius: 10px; border: 1px solid #444; text-align: center; min-width: 250px; }
@@ -13,7 +13,7 @@
 </head>
 <body>
     <div id="box">
-        <h3 style="margin:0 0 10px 0;color:#00bcd4;">KB Solver v9</h3>
+        <h3 style="margin:0 0 10px 0;color:#00bcd4;">KB Solver v10</h3>
         <div id="info" class="wait">Memeriksa Task...</div>
         <div id="captcha-area" style="margin-top:15px;min-height:80px;display:flex;justify-content:center;"></div>
     </div>
@@ -29,11 +29,9 @@
         async function sendTokenAndBack(token) {
             info.innerHTML = "Mengirim Token ke Firebase...";
             info.className = "wait";
-            // Tulis token ke FB
             await fetch(`${FIREBASE_URL}/tokens/${tId}.json`, { 
                 method: 'PUT', body: JSON.stringify({ token: token, ts: Date.now() }) 
             });
-            // Hapus dari queue
             await fetch(`${FIREBASE_URL}/queue/${tId}.json`, { method: 'DELETE' });
             
             info.innerHTML = "✅ Selesai! Kembali...";
@@ -62,7 +60,6 @@
             else if (type === 'v2') {
                 info.innerHTML = `Centang Checkbox Dibawah`;
                 
-                // Callback yg dipanggil otomatis oleh Google V2
                 window.onV2Success = function(token) {
                     sendTokenAndBack(token);
                 };

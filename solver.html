@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0">
-    <title>KB Solver v8.1</title>
+    <title>KB Solver</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -14,157 +14,433 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            padding-top: 50px;
+            padding-bottom: 60px;
         }
-        #status {
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            z-index: 99999;
-            font-family: monospace;
-            font-size: 12px;
-            text-align: center;
-            border: 1px solid #333;
-            pointer-events: none;
-            max-width: 90%;
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #1B1D25; color: #eaeaea; }
         }
-        #fallback {
-            display: none;
-            text-align: center;
-            padding: 20px;
+        #top-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.85); padding: 8px 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333; z-index: 9999;
         }
-        .spin {
+        #top-site {
+            color: #00bcd4; font-size: 11px; font-family: monospace;
+            max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        #top-type {
+            background: #ff9800; color: #000; font-weight: bold;
+            font-size: 11px; padding: 3px 10px; border-radius: 12px; font-family: monospace;
+        }
+        #solving-text {
+            font-size: 14px; color: #ccc; margin: 20px 0 16px;
+            text-align: center; padding: 0 20px; font-family: monospace;
+        }
+
+        /* ── V2 AREA ── */
+        #v2-area {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; padding: 16px;
+        }
+        #v2-label {
+            font-size: 13px; color: #aaa; margin-bottom: 14px;
+            text-align: center; font-family: monospace;
+        }
+        #v2-widget-container {
+            background: #fff;
+            border-radius: 4px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #333;
-            border-top-color: #00bcd4;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+        }
+
+        /* ── V3 AREA ── */
+        #v3-area {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; max-width: 340px; padding: 30px 16px;
+            text-align: center;
+        }
+        #v3-logo { font-size: 72px; margin-bottom: 16px; }
+        #v3-status { font-size: 14px; color: #aaa; font-family: monospace; margin-bottom: 8px; }
+        #v3-sitekey-info { font-size: 10px; color: #444; font-family: monospace; word-break: break-all; padding: 0 20px; }
+        .spin-ring {
+            display: inline-block; width: 48px; height: 48px;
+            border: 4px solid #333; border-top-color: #00bcd4;
+            border-radius: 50%; animation: spin 1s linear infinite;
+            margin-bottom: 16px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .info { color: #888; font-size: 12px; font-family: monospace; }
-        .error { color: #f44336; }
-        .success { color: #4caf50; }
+
+        /* ── SUCCESS ── */
+        #success-area {
+            display: none; flex-direction: column; align-items: center;
+            text-align: center; padding: 0 20px; width: 100%; max-width: 340px;
+        }
+        .big-icon { font-size: 64px; margin-bottom: 12px; }
+        #success-area h2 { color: #4caf50; margin-bottom: 8px; font-size: 20px; }
+        #success-area p { color: #555; font-size: 12px; }
+        #token-preview {
+            margin: 12px 0; background: #0d1a0d; border: 1px solid #1b5e20;
+            border-radius: 6px; padding: 8px 10px; font-size: 9px; color: #4caf50;
+            word-break: break-all; font-family: monospace; width: 100%;
+        }
+        #countdown { font-size: 40px; font-weight: bold; color: #4caf50; margin: 8px 0; }
+
+        /* ── ERROR ── */
+        #error-area {
+            display: none; flex-direction: column; align-items: center;
+            text-align: center; padding: 0 20px;
+        }
+        #error-area h3 { color: #f44336; margin-bottom: 8px; font-size: 18px; }
+        #error-area p { color: #666; font-size: 12px; }
+
+        /* ── NO PARAMS (STANDBY) ── */
+        #no-params {
+            display: none; flex-direction: column; align-items: center;
+            text-align: center; padding: 20px;
+        }
+        #no-params .big-icon { font-size: 70px; }
+        #no-params h2 { color: #ff9800; margin-bottom: 10px; }
+        #no-params p { color: #555; font-size: 12px; line-height: 1.8; }
+
+        /* ── BOTTOM BAR ── */
+        #bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.9); padding: 6px 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #222; font-family: monospace;
+            font-size: 10px; color: #444;
+        }
+        .spin {
+            display: inline-block; width: 12px; height: 12px;
+            border: 2px solid #333; border-top-color: #ffeb3b;
+            border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
+        }
     </style>
 </head>
 <body>
-    <div id="status">⏳ Memuat task...</div>
-    <div id="fallback">
-        <div class="spin"></div>
-        <p>Menunggu token dari iframe...</p>
-        <p class="info" id="info-msg"></p>
+
+<div id="top-bar">
+    <span id="top-site">KB Captcha Solver</span>
+    <span id="top-type">-</span>
+</div>
+
+<div id="solving-text">Memuat...</div>
+
+<!-- V2 AREA -->
+<div id="v2-area">
+    <div id="v2-label">👆 Tap checkbox untuk verifikasi</div>
+    <div id="v2-widget-container">
+        <div id="kb-recaptcha"></div>
     </div>
+</div>
 
-    <script>
-    (function() {
-        'use strict';
+<!-- V3 AREA -->
+<div id="v3-area">
+    <div class="spin-ring"></div>
+    <div id="v3-logo">🤖</div>
+    <div id="v3-status">Solving ReCAPTCHA v3, please wait...</div>
+    <div id="v3-sitekey-info"></div>
+</div>
 
-        var params = new URLSearchParams(window.location.search);
-        var taskId   = params.get('kb_task_id') || '';
-        var type     = (params.get('kb_type') || '').toLowerCase();
-        var sitekey  = params.get('kb_sitekey') || '';
-        var fbUrl    = params.get('kb_fb') || 'https://kb-relay-default-rtdb.asia-southeast1.firebasedatabase.app';
-        var htmlEncoded = params.get('kb_html') || '';
+<!-- SUCCESS -->
+<div id="success-area">
+    <div class="big-icon">✅</div>
+    <h2>Token Terkirim!</h2>
+    <div id="token-preview"></div>
+    <div id="countdown">3</div>
+    <p>detik, kembali otomatis...</p>
+</div>
 
-        var statusEl = document.getElementById('status');
-        var fallbackEl = document.getElementById('fallback');
-        var infoMsg = document.getElementById('info-msg');
+<!-- ERROR -->
+<div id="error-area">
+    <div class="big-icon">❌</div>
+    <h3 id="error-title">Error</h3>
+    <p id="error-msg">Terjadi kesalahan</p>
+</div>
 
-        function setStatus(msg, isError) {
-            statusEl.textContent = msg;
-            statusEl.style.color = isError ? '#f44336' : '#fff';
-        }
+<!-- NO PARAMS (STANDBY) -->
+<div id="no-params">
+    <div class="big-icon">🤖</div>
+    <h2>KB Captcha Solver</h2>
+    <p>Halaman ini diakses otomatis<br>oleh script Tampermonkey Android.<br><br>
+    <span style="color:#00bcd4;">Pastikan Tampermonkey aktif.</span><br>
+    Buka halaman ini di Kiwi Browser<br>dan biarkan terbuka sebagai standby.</p>
+</div>
 
-        if (!taskId || !type) {
-            setStatus('⚠️ Tidak ada task ID');
-            fallbackEl.style.display = 'block';
-            infoMsg.textContent = 'Halaman ini digunakan oleh Android Worker.';
+<!-- BOTTOM BAR -->
+<div id="bottom-bar">
+    <span id="bb-task">Task: -</span>
+    <span id="bb-ver">KB Solver v7.9</span>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var params = new URLSearchParams(window.location.search);
+    var taskId   = params.get('kb_task_id')   || '';
+    var type     = (params.get('kb_type')     || '').toLowerCase();
+    var sitekey  = params.get('kb_sitekey')   || '';
+    var action   = params.get('kb_action')    || 'submit';
+    var isEnt    = params.get('kb_enterprise') === '1';
+    var pageUrl  = params.get('kb_page_url')  || '';
+    var fbUrl    = params.get('kb_fb')        || 'https://kb-relay-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+    // Update UI bars
+    document.getElementById('top-type').textContent = type ? type.toUpperCase() : '?';
+    document.getElementById('top-site').textContent = pageUrl || 'KB Captcha Solver';
+    document.getElementById('bb-task').textContent  = taskId  ? ('Task: ' + taskId) : 'Standby';
+
+    var areas = ['v2-area','v3-area','success-area','error-area','no-params'];
+    function showArea(id) {
+        areas.forEach(function(a) {
+            var el = document.getElementById(a);
+            if (el) el.style.display = 'none';
+        });
+        var t = document.getElementById(id);
+        if (t) t.style.display = 'flex';
+    }
+
+    function backToStandby() {
+        window.location.replace(window.location.pathname);
+    }
+
+    function showSuccess(token) {
+        showArea('success-area');
+        document.getElementById('solving-text').textContent = '✅ Selesai!';
+        document.getElementById('bb-task').textContent = '✅ Token terkirim!';
+        var preview = token.length > 40 ? token.substr(0,28) + '...' + token.substr(-10) : token;
+        document.getElementById('token-preview').textContent = '🔑 ' + preview;
+        var n = 3;
+        document.getElementById('countdown').textContent = n;
+        var cd = setInterval(function() {
+            n--;
+            document.getElementById('countdown').textContent = n;
+            if (n <= 0) { clearInterval(cd); backToStandby(); }
+        }, 1000);
+    }
+
+    function showError(title, msg) {
+        showArea('error-area');
+        document.getElementById('error-title').textContent = title || 'Error';
+        document.getElementById('error-msg').textContent   = msg   || '';
+        document.getElementById('solving-text').textContent = '❌ ' + (title || 'Error');
+        document.getElementById('bb-task').textContent = '❌ Error';
+        setTimeout(backToStandby, 6000);
+    }
+
+    // Tidak ada param → standby
+    if (!taskId || !type || !sitekey) {
+        document.getElementById('solving-text').textContent = 'Standby...';
+        document.getElementById('top-type').textContent = 'STANDBY';
+        showArea('no-params');
+        return;
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // KIRIM TOKEN KE FIREBASE
+    // ──────────────────────────────────────────────────────────
+    var tokenSent = false;
+
+    function sendTokenToFirebase(token) {
+        if (tokenSent) return;
+        tokenSent = true;
+
+        document.getElementById('solving-text').textContent = '📤 Mengirim token...';
+        document.getElementById('bb-task').textContent = '📤 Mengirim...';
+
+        fetch(fbUrl + '/tokens/' + taskId + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token, solvedAt: Date.now(), type: type })
+        })
+        .then(function(r) {
+            if (r.ok) {
+                console.log('[KB Solver] ✅ Token terkirim ke Firebase!');
+                fetch(fbUrl + '/queue/' + taskId + '.json', { method: 'DELETE' }).catch(function(){});
+                showSuccess(token);
+            } else {
+                tokenSent = false;
+                showError('Firebase Error', 'HTTP ' + r.status);
+            }
+        })
+        .catch(function(e) {
+            tokenSent = false;
+            showError('Network Error', e.message);
+        });
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // LISTEN postMessage dari reCAPTCHA
+    // ──────────────────────────────────────────────────────────
+    window.addEventListener('message', function(event) {
+        if (tokenSent) return;
+        var d = event.data;
+        if (!d) return;
+
+        if (d.type === 'proxyGateResult' && d.hash && d.hash.length > 20) {
+            console.log('[KB Solver] ✅ Token dari postMessage (proxyGateResult)');
+            sendTokenToFirebase(d.hash);
             return;
         }
+        if (d.type === 'proxyGateError') {
+            console.log('[KB Solver] ❌ proxyGateError: ' + d.error);
+            if (!tokenSent) showError('reCAPTCHA Error', d.error || 'Unknown error');
+        }
+    });
 
-        setStatus('⏳ Memproses task ' + taskId);
+    // ──────────────────────────────────────────────────────────
+    // SOLVE V2 (fallback)
+    // ──────────────────────────────────────────────────────────
+    if (type === 'v2') {
+        showArea('v2-area');
+        document.getElementById('solving-text').textContent = 'Loading reCAPTCHA V2...';
+        document.getElementById('v2-label').textContent = '🔄 Memuat widget...';
 
-        // Jika ada HTML, render di iframe
-        if (htmlEncoded) {
+        window.postRecaptchaMessageJs = function(token) {
+            console.log('[KB Solver] ✅ V2 callback dipanggil! len=' + token.length);
+            var delay = (token.substring(0, 3) !== '03A') ? 1000 : 0;
+            setTimeout(function() {
+                window.postMessage({
+                    type: 'proxyGateResult',
+                    hash: token,
+                    captchaType: 'recaptchaV2',
+                    taskId: parseInt(taskId) || taskId,
+                    sitekey: sitekey
+                }, '*');
+            }, delay);
+        };
+
+        var recaptchaDiv = document.getElementById('kb-recaptcha');
+        recaptchaDiv.className = 'g-recaptcha';
+        recaptchaDiv.setAttribute('data-sitekey', sitekey);
+        recaptchaDiv.setAttribute('data-callback', 'postRecaptchaMessageJs');
+        if (isEnt) recaptchaDiv.setAttribute('data-enterprise', 'true');
+
+        window.onV2Load = function() {
+            console.log('[KB Solver] reCAPTCHA V2 script loaded');
             try {
-                var htmlContent = atob(decodeURIComponent(htmlEncoded));
-                console.log('[KB Solver] HTML diterima, panjang=' + htmlContent.length);
-                if (htmlContent.length < 50) {
-                    setStatus('⚠️ HTML terlalu pendek, gunakan fallback');
-                    fallbackEl.style.display = 'block';
-                    infoMsg.textContent = 'HTML tidak lengkap, coba refresh.';
-                } else {
-                    // Buat iframe dengan sandbox lengkap
-                    var iframe = document.createElement('iframe');
-                    iframe.style.cssText = 'width:100%;height:100vh;border:none;position:fixed;top:0;left:0;z-index:9998;';
-                    iframe.sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups allow-modals';
-                    iframe.srcdoc = htmlContent;
-                    document.body.appendChild(iframe);
-                    // Hapus elemen lain
-                    document.body.innerHTML = '';
-                    document.body.appendChild(iframe);
-                    document.body.appendChild(statusEl);
-                    setStatus('⏳ Menunggu token...');
-
-                    // Listen postMessage
-                    var tokenSent = false;
-                    window.addEventListener('message', function(event) {
-                        if (tokenSent) return;
-                        var d = event.data;
-                        if (!d) return;
-                        if (d.type === 'proxyGateResult' && d.hash && d.hash.length > 20) {
-                            tokenSent = true;
-                            setStatus('✅ Token diterima, mengirim ke Firebase...');
-                            console.log('[KB Solver] Token diterima, kirim ke Firebase');
-                            fetch(fbUrl + '/tokens/' + taskId + '.json', {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ token: d.hash, solvedAt: Date.now(), type: type })
-                            })
-                            .then(function(r) {
-                                if (r.ok) {
-                                    setStatus('✅ Sukses! Tutup dalam 3 detik...');
-                                    fetch(fbUrl + '/queue/' + taskId + '.json', { method: 'DELETE' }).catch(function(){});
-                                    setTimeout(function(){ window.close(); }, 3000);
-                                } else {
-                                    setStatus('❌ Gagal kirim ke Firebase', true);
-                                }
-                            })
-                            .catch(function(e) {
-                                setStatus('❌ Error: ' + e.message, true);
-                            });
-                        }
-                    });
-
-                    // Timeout 3 menit
-                    setTimeout(function() {
-                        if (!tokenSent) {
-                            setStatus('⏰ Timeout, kembali ke standby', true);
-                            setTimeout(function(){ window.location.replace(window.location.pathname); }, 2000);
-                        }
-                    }, 180000);
-                }
+                window.grecaptcha.render('kb-recaptcha', {
+                    sitekey: sitekey,
+                    theme: 'light',
+                    callback: window.postRecaptchaMessageJs,
+                    'expired-callback': function() {
+                        document.getElementById('v2-label').textContent = '⚠️ Expired, klik lagi';
+                    }
+                });
+                document.getElementById('solving-text').textContent = '👆 Tap checkbox untuk verifikasi';
+                document.getElementById('v2-label').textContent = '👆 Tap checkbox di bawah ini';
+                document.getElementById('bb-task').textContent = '⏳ Menunggu user...';
             } catch(e) {
-                setStatus('❌ Error decode HTML: ' + e.message, true);
-                fallbackEl.style.display = 'block';
-                infoMsg.textContent = 'Error: ' + e.message;
+                console.log('[KB Solver] render error: ' + e.message);
+                document.getElementById('solving-text').textContent = '👆 Tap checkbox untuk verifikasi';
+                document.getElementById('v2-label').textContent = '👆 Tap checkbox di bawah ini';
             }
-        } else {
-            // Tidak ada HTML, tampilkan fallback dengan widget standar (tapi token tidak valid)
-            setStatus('⚠️ Mode lama (tanpa HTML) - token mungkin invalid');
-            fallbackEl.style.display = 'block';
-            infoMsg.textContent = 'Tidak ada HTML task. Token akan invalid untuk domain asli.';
+        };
+
+        var sc = document.createElement('script');
+        sc.src = 'https://www.google.com/recaptcha/api.js?onload=onV2Load&render=explicit';
+        sc.async = true;
+        sc.defer = true;
+        sc.onerror = function() {
+            showError('Script Error', 'Gagal load reCAPTCHA API');
+        };
+        (document.head || document.body).appendChild(sc);
+
+        setTimeout(function() {
+            if (!tokenSent) showError('Timeout V2', 'Terlalu lama menunggu');
+        }, 180000);
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // SOLVE V3 (fallback)
+    // ──────────────────────────────────────────────────────────
+    if (type === 'v3') {
+        showArea('v3-area');
+        document.getElementById('solving-text').textContent = 'Solving ReCAPTCHA v3, please wait...';
+        document.getElementById('v3-sitekey-info').textContent = sitekey.substring(0,20) + '...';
+
+        function reportError(message) {
+            if (message && message.indexOf('Invalid site key') !== -1)
+                message = 'Invalid site key';
+            window.postMessage({
+                type: 'proxyGateError',
+                error: message,
+                captchaType: 'recaptchaV3',
+                sitekey: sitekey
+            }, '*');
         }
 
-    })();
-    </script>
+        window.onloadCallback = function() {
+            console.log('[KB Solver] V3 onloadCallback dipanggil');
+            var api = isEnt ? (window.grecaptcha && window.grecaptcha.enterprise) : window.grecaptcha;
+            if (!api) {
+                reportError('grecaptcha tidak tersedia');
+                return;
+            }
+            api.ready(function() {
+                try {
+                    api.execute(sitekey, { action: action })
+                    .then(function(token) {
+                        if (!token) {
+                            reportError('Invalid site key or not loaded in api.js');
+                            return;
+                        }
+                        console.log('[KB Solver] ✅ V3 token len=' + token.length);
+                        var delay = (token.substring(0, 3) !== '03A') ? 1000 : 0;
+                        setTimeout(function() {
+                            window.postMessage({
+                                type: 'proxyGateResult',
+                                hash: token,
+                                captchaType: 'recaptchaV3',
+                                taskId: parseInt(taskId) || taskId,
+                                sitekey: sitekey
+                            }, '*');
+                        }, delay);
+                    })
+                    .catch(function(err) {
+                        reportError(err.message || 'Execute error');
+                    });
+                } catch(e) {
+                    reportError(e.message);
+                }
+            });
+        };
+
+        var apiUrl = isEnt
+            ? 'https://www.google.com/recaptcha/enterprise.js?onload=onloadCallback&render=' + sitekey
+            : 'https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=' + sitekey;
+
+        var scV3 = document.createElement('script');
+        scV3.src = apiUrl;
+        scV3.async = true;
+        scV3.defer = true;
+        scV3.onerror = function() {
+            reportError('Gagal load reCAPTCHA script');
+        };
+        (document.head || document.body).appendChild(scV3);
+
+        window.addEventListener('message', function(ev) {
+            if (ev.data && ev.data.type === 'proxyGateResult') {
+                document.getElementById('v3-logo').textContent = '✅';
+                document.getElementById('v3-status').textContent = 'Token berhasil! Mengirim...';
+            }
+        });
+
+        setTimeout(function() {
+            if (!tokenSent) {
+                reportError('Timeout - tidak ada token dalam 45 detik');
+            }
+        }, 45000);
+    }
+
+    // Safety: kembali ke standby setelah 4 menit
+    setTimeout(backToStandby, 240000);
+
+})();
+</script>
 </body>
 </html>

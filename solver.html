@@ -198,7 +198,7 @@
     var action   = params.get('kb_action')    || 'submit';
     var isEnt    = params.get('kb_enterprise') === '1';
     var pageUrl  = params.get('kb_page_url')  || '';
-    var fbUrl    = params.get('kb_fb')        || 'https://kb-relay-default-rtdb.asiasoutheast1.firebasedatabase.app';
+    var fbUrl    = params.get('kb_fb')        || 'https://kb-relay-default-rtdb.asia-southeast1.firebasedatabase.app';
 
     // Update UI bars
     document.getElementById('top-type').textContent = type ? type.toUpperCase() : '?';
@@ -483,5 +483,5 @@
 
 })();
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1b9ff996c59fe8e',t:'MTc4NDEzMTQxOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
